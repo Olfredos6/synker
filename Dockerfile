@@ -1,9 +1,7 @@
 FROM python:3.9-slim
-COPY requirements.txt /app
+WORKDIR /app
+COPY ./requirements.txt .
 RUN apt update \
-    && apt upgrade \
+    && apt upgrade -y \
     && apt install -y git \
-    && pip install -r /app/requirements
-COPY src/ /app
-ENTRYPOINT bash -c python
-CMD ["/app"]
+    && pip install -r requirements.txt
