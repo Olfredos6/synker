@@ -1,13 +1,18 @@
 version: "3.2"
 
 services:
-  synker:
-    build: ./
-    restart: "always"
-    tty: true 
+  django:
+    build: ./django-app/
     volumes:
       - type: bind
-        source: "./src"
-        target: "/app"
+        source: "./django-app"
+        target: "/synker"
     
-    command: ["python", "."]
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - './.env'
+      
+    command: bash -c 'python manage.py makemigrations && python manage.py migrate && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
+
