@@ -16,7 +16,7 @@ def process_endpoint(endpoint):
 def GET(endpoint, return_dict=True, params={} ):
     '''
         Makes a GET request to the GitHub API
-        to the specified endpoint.
+        to the specified endpoint. 
         Accepts:
             endpoint: API Endpoint
             return_dict: if True, the data is returned as a python dict else the untouched response.

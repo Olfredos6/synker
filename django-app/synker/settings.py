@@ -78,8 +78,6 @@ WSGI_APPLICATION = 'synker.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-print(sys.argv)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -168,3 +166,13 @@ REQUEST_HEADERS = {
     "Accept": "application/vnd.github.v3+json",
     "Authorization" : f"token {API_KEY}"
 }
+
+SYNKER_REPO_DIR = Path(BASE_DIR).parent.joinpath("repositories")
+# create repositories folder if does not exists.
+# I know this will need to be shared with the PHP container.
+if not SYNKER_REPO_DIR.exists():
+    SYNKER_REPO_DIR.mkdir()
+
+print("""
+    SYNKER REPOS DIR: {}
+    """.format(SYNKER_REPO_DIR))

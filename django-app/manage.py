@@ -4,6 +4,7 @@ import os
 import sys
 
 
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'synker.settings')
@@ -23,7 +24,7 @@ if __name__ == '__main__':
     main()
 
     # if not os.environ.get('SYNKER_RUNNING', None):
-    # @TODO: Make this modular
+    # # @TODO: Make this modular
     from multiprocessing import Process
     from sync_utils.runner import run
 

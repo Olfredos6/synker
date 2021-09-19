@@ -1,4 +1,10 @@
 from django.db import models
+from pathlib import Path
+from django.conf import settings
+import subprocess
+from datetime import datetime
+from os import environ
+from pytz import utc as UTC
 
 # from . import utils
 # from . import settings
@@ -16,6 +22,7 @@ class Repo(models.Model):
     size = models.IntegerField()
     owner_login = models.CharField(max_length=100, null=False)
 
+
     @staticmethod
     def create_from_payload(type, **kwargs):
         '''
@@ -32,7 +39,6 @@ class Repo(models.Model):
         new_repo.save()
         return new_repo
     
-
     @staticmethod
     def check_update():
         ''' 
@@ -42,8 +48,62 @@ class Repo(models.Model):
         pass
 
 
-    def sync(self) -> None:
-        print(f"Syncing {self.full_name}")
+    @property
+    def path(self):
+        ''' returns the repo directory path '''
+        return settings.SYNKER_REPO_DIR.joinpath(self.node_id)
+
+    def sync(self, timestamp:datetime = None)-> None:
+        '''
+        Syncs a repository. 
+        Starts by checking if the repos folder contains a repo that matches this repo's GitHub node_id
+            creates it if necessay.
+        If the repo is created
+            use git clone. 
+            Otherwwise, check if the updated_at are different.
+                If different, git pull
+        
+        Accepts:
+            timestamp: a datetime.
+                    Using this argument forces aplying git clone on the repo.
+
+                    Defaults to self.updated_at
+        '''
+        if not timestamp:
+            timestamp = self.updated_at
+        
+        print(f"Syncing {self.full_name} using timestamp {timestamp}")
+        created_repo = False
+        if not self.path.exists():
+            self.path.mkdir()
+            created_repo = True
+        else:
+            print("repo folder exists, updating...")
+        
+        if created_repo:
+            # git clone
+            print(f"Cloning {self.full_name} into {self.path}")
+            self.clone()
+
+        else:
+            if self.updated_at > timestamp.replace(tzinfo=UTC):
+                print(f"Updating {self.full_name}")
+                self.pull()
+
+
+    def clone(self):
+        ''' clone the repo using git's clone command '''
+        # insert GitHub's auth_token inot repo's clone URL
+        authed_url = self.clone_url.replace("github.com", f"{environ.get('GITHUB_TOKEN')}@github.com")
+        print("New URL", authed_url)
+        cloning_proc = subprocess.run(['git', 'clone', authed_url, self.path ], capture_output=True)
+        print(cloning_proc, cloning_proc.stdout)
+
+
+    def pull(self):
+        ''' git pull on the repo '''
+        pull_proc = subprocess.run(['git', 'pull'], capture_output=True, cwd=self.path)
+        print(pull_proc, pull_proc.stdout)
 
 
     def track(self) -> None:

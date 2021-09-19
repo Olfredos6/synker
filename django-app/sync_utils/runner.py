@@ -2,6 +2,7 @@ import json
 from time import sleep
 from django.conf import settings
 import os
+from datetime import datetime
 
 from . import github
 from core.models import Repo
@@ -14,13 +15,20 @@ def fetch_all(type="member"):
     repos = github.collect_repos(type)
     for r in repos:
         # check if repository exists, if not, create and sync
+        sync_repo = False
         repository = Repo.objects.filter(node_id=r.get('node_id'))
         if repository.exists():
             repository = repository[0]
+
         else:
             repository = Repo.create_from_payload(type, **r)
             print("Created repository", repository)
-        repository.sync()
+
+        repository.sync(
+            datetime.strptime(
+                r.get('updated_at'),
+                "%Y-%m-%dT%H:%M:%SZ"
+                ))
 
 
 def run():
@@ -29,8 +37,9 @@ def run():
         Runs sync function every 5 minutes
     '''
     while True: 
+        print(f"-------> Running sync at {datetime.now()}")
         fetch_all()
-        sleep(300)
+        sleep(60)
 
 
 # def check_data():

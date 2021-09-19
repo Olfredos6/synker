@@ -3,4 +3,5 @@ WORKDIR /synker
 COPY ./requirements.txt .
 RUN apt update \
     && apt upgrade -y \
+    && apt install git -y \
     && pip install -r requirements.txt
