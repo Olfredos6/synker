@@ -1,3 +1,4 @@
 **/__pycache__
 django-app/db.sqlite3
 repositories/
+.env
