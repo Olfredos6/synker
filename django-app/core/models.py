@@ -53,6 +53,19 @@ class Repo(models.Model):
         ''' returns the repo directory path '''
         return settings.SYNKER_REPO_DIR.joinpath(self.node_id)
 
+    
+    def update_db(self, **payload):
+        '''
+            Updates the repo's data on on the databse. 
+            For now, the most important piece of information
+            requiring an update is the updated_at timestamp. 
+            This info is updated everytime the repo is pulled.
+        '''
+        return Repo.objects.filter(node_id=self.node_id).update(
+            updated_at=payload.get('updated_at')
+        )
+
+
     def sync(self, timestamp:datetime = None)-> None:
         '''
         Syncs a repository. 
@@ -84,11 +97,14 @@ class Repo(models.Model):
             # git clone
             print(f"Cloning {self.full_name} into {self.path}")
             self.clone()
+            self.update_db(updated_at=timestamp)
 
         else:
-            if self.updated_at > timestamp.replace(tzinfo=UTC):
-                print(f"Updating {self.full_name}")
+            print(f"will only update if {self.updated_at} is greater than {timestamp.replace(tzinfo=UTC)}")
+            if self.updated_at < timestamp.replace(tzinfo=UTC):
+                print(f"Updating/pulling {self.full_name}")
                 self.pull()
+                self.update_db(updated_at=timestamp)
 
 
     def clone(self):
