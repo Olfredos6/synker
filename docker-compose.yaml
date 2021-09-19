@@ -7,6 +7,9 @@ services:
       - type: bind
         source: "./django-app"
         target: "/synker"
+      - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
+        source: "./repositories"
+        target: "/repositories"
     
     ports:
       - "3000:3000"
