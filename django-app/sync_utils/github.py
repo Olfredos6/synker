@@ -29,7 +29,7 @@ def GET(endpoint, return_dict=True, params={} ):
     if r.ok:
         return r.json() if return_dict else r
     else:
-        print(r.status_code, r.reason)
+        print("!! ERROR?", r.status_code, r.reason)
         return None if return_dict else r
 
 
@@ -37,5 +37,10 @@ def get_current_user_info():
     return GET("/user", False)
 
 
-def collect_repos(type="all"):
-    return GET("/user/repos", True, {"type": type})
+def collect_repos(type="all", page=1):
+    '''
+        Accepts:
+            type: type of repo
+            page: result page number
+    '''
+    return GET("/user/repos", True, {"type": type, "per_page": 100, "page": page})
