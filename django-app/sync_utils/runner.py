@@ -59,15 +59,19 @@ def fetch_all(type="member"):
         
     print(stats)
 
+import threading
 def run():
     '''
         Main function.
         Runs sync function every 5 minutes
     '''
-    while True: 
-        print(f"-------> Running sync at {datetime.now()}")
-        fetch_all()
-        sleep(300)
+    fetch_all()
+    timer = threading.Timer(300, run)
+    timer.start()
+    # print("Hello world")
+    # while True: 
+    #     fetch_all()
+    #     sleep(300)
 
 
 # def check_data():
