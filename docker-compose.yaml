@@ -20,6 +20,8 @@ services:
     command: bash -c 'python manage.py makemigrations && python manage.py migrate && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
 
   background-sync:
+    depends_on: 
+      - django
     build: ./django-app/
     env_file:
       - './.env'
@@ -31,3 +33,12 @@ services:
         source: "./repositories"
         target: "/repositories"
     command: bash -c 'python manage.py shell -c "from sync_utils.runner import run; run()"'
+
+  apache-php:
+    image: php:7.2-apache
+    ports:
+      - "3001:80"
+    volumes:
+      - type: bind
+        source: './repositories'
+        target: '/var/www/html'
