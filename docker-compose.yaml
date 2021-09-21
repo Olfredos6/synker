@@ -1,12 +1,26 @@
+# DO NOT FORGET TO CONFIGURE NGINX ON HOST.
+# Nginx configuration sample found inside ./synker.conf
 version: "3.2"
 
 services:
+  static:
+    image: nginx:latest
+    ports:
+      - "2999:80"
+  
+    volumes:
+      - "./synker.conf:/etc/nginx/conf.d/default.conf"
+      - "./statics:/usr/share/nginx/html"
+
   django:
     build: ./django-app/
     volumes:
       - type: bind
         source: "./django-app"
         target: "/synker"
+      - type: bind
+        source: "./statics"
+        target: "/statics"
       - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
         source: "./repositories"
         target: "/repositories"
@@ -17,7 +31,7 @@ services:
     env_file:
       - './.env'
       
-    command: bash -c 'python manage.py makemigrations && python manage.py migrate && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
+    command: bash -c 'python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
 
   background-sync:
     depends_on: 
