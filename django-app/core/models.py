@@ -81,37 +81,47 @@ class Repo(models.Model):
                     Using this argument forces aplying git clone on the repo.
 
                     Defaults to self.updated_at
+        
+        Returns: 0 if not updated
+                 1 if updated
+                 2 if cloned   
         '''
+        feedback = 0
         if not timestamp:
             timestamp = self.updated_at
         
-        print(f"Syncing {self.full_name} using timestamp {timestamp}")
+        # print(f"Syncing {self.full_name} using timestamp {timestamp}")
         created_repo = False
         if not self.path.exists():
             self.path.mkdir()
             created_repo = True
         else:
-            print("repo folder exists, updating...")
+            # print("repo folder exists, updating...")
+            pass
         
         if created_repo:
             # git clone
-            print(f"Cloning {self.full_name} into {self.path}")
+            # print(f"Cloning {self.full_name} into {self.path}")
             self.clone()
             self.update_db(updated_at=timestamp)
+            feedback = 2
 
         else:
-            print(f"will only update if {self.updated_at} is greater than {timestamp.replace(tzinfo=UTC)}")
+            # print(f"will only update if {self.updated_at} is greater than {timestamp.replace(tzinfo=UTC)}")
             if self.updated_at < timestamp.replace(tzinfo=UTC):
-                print(f"Updating/pulling {self.full_name}")
+                # print(f"Updating/pulling {self.full_name}")
                 self.pull()
                 self.update_db(updated_at=timestamp)
+                feedback = 1
+        
+        return feedback
 
 
     def clone(self):
         ''' clone the repo using git's clone command '''
         # insert GitHub's auth_token inot repo's clone URL
         authed_url = self.clone_url.replace("github.com", f"{environ.get('GITHUB_TOKEN')}@github.com")
-        print("New URL", authed_url)
+        # print("New URL", authed_url)
         cloning_proc = subprocess.run(['git', 'clone', authed_url, self.path ], capture_output=True)
         print(cloning_proc, cloning_proc.stdout)
 
@@ -119,7 +129,7 @@ class Repo(models.Model):
     def pull(self):
         ''' git pull on the repo '''
         pull_proc = subprocess.run(['git', 'pull'], capture_output=True, cwd=self.path)
-        print(pull_proc, pull_proc.stdout)
+        # print(pull_proc, pull_proc.stdout)
 
 
     def track(self) -> None:

@@ -19,14 +19,22 @@ def fetch_all(type="member"):
     '''
     collect_next_page = True
     next_page = 1
+    stats = {
+        'collected': 0,
+        'updated': 0,
+        'cloned': 0
+    }
 
     while collect_next_page:
-        print(f"Collecting page {next_page} results")
         repos = github.collect_repos(type, page=next_page)
-        if len(repos) != 100:
+        print(f"----> Collected {len(repos)} repos from page {next_page} of results")
+
+        if len(repos) < settings.GITHUB_PER_PAGE:
             collect_next_page = False
         else:
             next_page += 1
+
+        stats['collected'] += len(repos)
         
         for r in repos:
             # check if repository exists, if not, create and sync
@@ -37,14 +45,19 @@ def fetch_all(type="member"):
 
             else:
                 repository = Repo.create_from_payload(type, **r)
-                print("Created repository", repository)
+                # print("Created repository", repository)
 
-            repository.sync(
+            feedback = repository.sync(
                 datetime.strptime(
                     r.get('updated_at'),
                     "%Y-%m-%dT%H:%M:%SZ"
                     ))
-
+            if feedback == 1:
+                stats['updated'] += 1
+            elif feedback == 2:
+                stats['cloned'] += 1
+        
+    print(stats)
 
 def run():
     '''

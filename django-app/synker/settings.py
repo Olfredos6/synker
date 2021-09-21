@@ -173,6 +173,9 @@ SYNKER_REPO_DIR = Path(BASE_DIR).parent.joinpath("repositories")
 if not SYNKER_REPO_DIR.exists():
     SYNKER_REPO_DIR.mkdir()
 
-print("""
-    SYNKER REPOS DIR: {}
-    """.format(SYNKER_REPO_DIR))
+GITHUB_PER_PAGE = int(environ.get("GITHUB_PER_PAGE"))
+
+print(f"""
+    SYNKER REPOS DIR: {SYNKER_REPO_DIR}
+    GITHUB Per page: {GITHUB_PER_PAGE}
+    """)
