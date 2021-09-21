@@ -175,7 +175,12 @@ if not SYNKER_REPO_DIR.exists():
 
 GITHUB_PER_PAGE = int(environ.get("GITHUB_PER_PAGE"))
 
+TEMP_FOLDER = Path(BASE_DIR).joinpath("temp")
+if not TEMP_FOLDER.exists():
+    TEMP_FOLDER.mkdir()
+
 print(f"""
     SYNKER REPOS DIR: {SYNKER_REPO_DIR}
     GITHUB Per page: {GITHUB_PER_PAGE}
+    TEMP FOLDER: {TEMP_FOLDER}
     """)

@@ -23,12 +23,3 @@ if __name__ == '__main__':
     
     main()
 
-    # if not os.environ.get('SYNKER_RUNNING', None):
-    # # @TODO: Make this modular
-    from multiprocessing import Process
-    from sync_utils.runner import run
-
-    print("Starting synker process")
-    synker_process = Process(target=run)
-    synker_process.start()
-

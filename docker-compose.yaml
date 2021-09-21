@@ -19,3 +19,15 @@ services:
       
     command: bash -c 'python manage.py makemigrations && python manage.py migrate && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
 
+  background-sync:
+    build: ./django-app/
+    env_file:
+      - './.env'
+    volumes:
+      - type: bind
+        source: "./django-app"
+        target: "/synker"
+      - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
+        source: "./repositories"
+        target: "/repositories"
+    command: bash -c 'python manage.py shell -c "from sync_utils.runner import run; run()"'
