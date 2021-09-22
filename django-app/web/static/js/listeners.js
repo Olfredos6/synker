@@ -1,11 +1,12 @@
 /** Elements' event listeners */
 const resultListElement = document.querySelector("#search-result")
+let temp_in_view_structure
 
 document.querySelector("#txt-search").addEventListener("input", (e) => {
     let keyword = e.target.value
     
     if (keyword !== "") {
-        resultListElement.innerHTML = spinner("searching...")
+        resultListElement.innerHTML = spinnerComponent("searching...")
 
         searchRepo(e.target.value).then(results => showSearchResults(results))
     } else {
@@ -14,16 +15,25 @@ document.querySelector("#txt-search").addEventListener("input", (e) => {
     }
 })
 
-
 $("body").on("click", ".repo-list-item", (e)=>{
     /**
-     * Get nd displays repo data, structure, PHP rendering
+     * Triggered when a repo item is clicked from the repo search result
+     * Get and displays repo data, structure
      */
     resultListElement.innerHTML = ""
+    document.getElementById('tree').innerHTML = spinnerComponent()
     getRepository(e.target.dataset.id)
     .then( data => {
+        // top, display repo name, user, and last updated time
+        document.querySelector("#repo-about").innerHTML = repoAboutComponent(data.repo)
+        document.getElementById('tree').innerHTML = ""
         var tree = new Tree(document.getElementById('tree'));
         tree.json(structPrepareTreeJS(data.struct))
     })
     
+})
+
+$("#tree").on("click", "details[data-type=folder]", e => {
+    const pathToDir = rebuildDirPath(e.target)
+    console.log(pathToDir)
 })

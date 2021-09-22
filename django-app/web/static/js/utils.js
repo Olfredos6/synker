@@ -31,7 +31,7 @@ function getRepository(id) {
         })
 }
 
-function spinner(text = "Spinning...") {
+function spinnerComponent(text = "Spinning...") {
     return `
     <div class="mx-auto mt-2">
         <div class="spinner-border" role="status">
@@ -69,4 +69,38 @@ function structPrepareTreeJS(struct) {
         return tree
     }
     return traverse(struct)
+}
+
+function rebuildDirPath(treeHTMLElement) {
+    /**
+     * Rebuilds a string matching the clicked element in
+     * displayed directory tree
+     */
+
+    function traverseUp(element, path = "") {
+        // if(element.firstElementChild.innerText !== ""){
+        //     path = element.innerText  + "/" +  path
+        const summaryElement = element.parentElement.children[0]
+        if (summaryElement.nodeName === 'SUMMARY' && summaryElement.innerText !== "") {
+            path = traverseUp(summaryElement.parentElement, summaryElement.innerText + "/" + path)
+        }
+        // }
+        return path
+    }
+    return traverseUp(treeHTMLElement /*, treeHTMLElement.innerText */)
+}
+
+function repoAboutComponent(repo) {
+    const updated_at = new Date(repo.last_updated)
+    return `
+    <div class="card">
+        <div class="card-footer text-muted repo-time">
+        Last updated: <br/> ${updated_at.toDateString()} - ${updated_at.toLocaleTimeString()}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">${repo.name}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">${repo.owner}</h6>
+        </div>
+    </div>
+    `
 }

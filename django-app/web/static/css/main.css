@@ -5,6 +5,7 @@ form>#search-result {
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 50vh;
+    z-index: 1000;
 }
 
 .main {
@@ -15,7 +16,15 @@ form>#search-result {
     margin: 0.5rem;
 }
 
+.explorer {
+    width: 100%;
+}
+
 .repo-list-item:hover {
     cursor: pointer;
     background-color: #f8f9fa;
+}
+
+.repo-time {
+    font-size: 0.8em;
 }
