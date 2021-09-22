@@ -33,7 +33,8 @@ $("body").on("click", ".repo-list-item", (e)=>{
     
 })
 
-$("#tree").on("click", "details[data-type=folder]", e => {
+$("#tree").on("click", "summary[class=selected]", e => {
+    // @TODO: Debounce
     const pathToDir = rebuildDirPath(e.target)
     console.log(pathToDir)
 })
