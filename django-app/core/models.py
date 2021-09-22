@@ -148,7 +148,7 @@ class Repo(models.Model):
             ''' traverse dir at path to form a structure inside
                 parent and return the updated parent
             '''
-            print(f"Traversing {path}")
+            # print(f"Traversing {path}")
             for entry in scandir(path):
                 parent["-"] = [] # will list files 
                 if entry.is_dir():

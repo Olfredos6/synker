@@ -15,3 +15,16 @@ def search_repo(request):
     return JsonResponse(data, safe=False)
 
 
+def repo(request, id):
+    '''
+    collects necessary data about a repository. That is:
+     - repo object data
+     - repo directory structure
+    '''
+
+    data = {"repo": None, "struct": None}
+    repo = get_object_or_404(Repo, node_id=id)
+    data["repo"] = repoSerialize(repo)
+    data["struct"] = repo.dir_struct()
+
+    return JsonResponse(data, safe=False)

@@ -6,3 +6,16 @@ form>#search-result {
     overflow-x: hidden;
     max-height: 50vh;
 }
+
+.main {
+    width: 100%;
+}
+
+.sidebar>div{
+    margin: 0.5rem;
+}
+
+.repo-list-item:hover {
+    cursor: pointer;
+    background-color: #f8f9fa;
+}
