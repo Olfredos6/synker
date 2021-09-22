@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from core.models import Repo
+from .utils import repoSerialize
 
 
 def index(request):
@@ -10,11 +11,7 @@ def search_repo(request):
     keyword = request.GET.get('keyword')
     data = []
     for repo in Repo.objects.filter(full_name__icontains=keyword):
-        data.append({
-            "id": repo.node_id,
-            "name": repo.full_name,
-            "last_updated": repo.updated_at,
-            "url": repo.url,
-            "owner": repo.owner_login
-        })
+        data.append(repoSerialize(repo))
     return JsonResponse(data, safe=False)
+
+
