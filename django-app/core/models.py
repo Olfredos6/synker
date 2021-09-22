@@ -138,4 +138,25 @@ class Repo(models.Model):
         '''
         pass
 
+    def dir_struct(self) -> dict:
+        ''' returns a dictionary object representing the 
+            the folder structure of the repo. We only go 3 level down.
+        '''
+        from os import scandir
 
+        def traverse(path, parent):
+            ''' traverse dir at path to form a structure inside
+                parent and return the updated parent
+            '''
+            print(f"Traversing {path}")
+            for entry in scandir(path):
+                parent["-"] = [] # will list files 
+                if entry.is_dir():
+                    parent[entry.name] = {"-": []}
+                    traverse(entry, parent[entry.name])
+                else:
+                    parent.get("-").append(entry.name)
+            
+            return parent
+        
+        return traverse(self.path,{"-": []})
