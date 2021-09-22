@@ -1,6 +1,8 @@
 /** Elements' event listeners */
 const resultListElement = document.querySelector("#search-result")
-let temp_in_view_structure
+const renderer = document.querySelector("#renderer")
+let inview_repo = undefined
+const PHP_SERVER = "http://142.93.35.195:3001"
 
 document.querySelector("#txt-search").addEventListener("input", (e) => {
     let keyword = e.target.value
@@ -25,6 +27,7 @@ $("body").on("click", ".repo-list-item", (e)=>{
     getRepository(e.target.dataset.id)
     .then( data => {
         // top, display repo name, user, and last updated time
+        inview_repo = data
         document.querySelector("#repo-about").innerHTML = repoAboutComponent(data.repo)
         document.getElementById('tree').innerHTML = ""
         var tree = new Tree(document.getElementById('tree'));
@@ -36,5 +39,5 @@ $("body").on("click", ".repo-list-item", (e)=>{
 $("#tree").on("click", "summary[class=selected]", e => {
     // @TODO: Debounce
     const pathToDir = rebuildDirPath(e.target)
-    console.log(pathToDir)
+    renderer.src = `${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`
 })
