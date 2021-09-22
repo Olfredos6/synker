@@ -1,8 +1,0 @@
-form>#search-result {
-    position: absolute;
-    top: 3rem;
-    width: 17rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 50vh;
-}

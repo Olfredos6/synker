@@ -2,3 +2,4 @@
 django-app/db.sqlite3
 repositories/
 .env
+statics/
