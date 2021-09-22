@@ -13,6 +13,8 @@ services:
       - "./statics:/usr/share/nginx/html"
 
   django:
+    depends_on:
+      - static
     build: ./django-app/
     volumes:
       - type: bind
@@ -23,15 +25,12 @@ services:
         target: "/statics"
       - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
         source: "./repositories"
-        target: "/repositories"
-    
+        target: "/repositories"    
     ports:
       - "3000:3000"
-
     env_file:
-      - './.env'
-      
-    command: bash -c 'python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
+      - './.env'      
+    command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
 
   background-sync:
     depends_on: 
