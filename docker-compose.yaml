@@ -1,13 +1,57 @@
+# DO NOT FORGET TO CONFIGURE NGINX ON HOST.
+# Nginx configuration sample found inside ./synker.conf
 version: "3.2"
 
 services:
-  synker:
-    build: ./
-    restart: "always"
-    tty: true 
+  static:
+    image: nginx:latest
+    ports:
+      - "2999:80"
+  
+    volumes:
+      - "./synker.conf:/etc/nginx/conf.d/default.conf"
+      - "./statics:/usr/share/nginx/html"
+
+  django:
+    depends_on:
+      - static
+    build: ./django-app/
     volumes:
       - type: bind
-        source: "./src"
-        target: "/app"
-    
-    command: ["python", "."]
+        source: "./django-app"
+        target: "/synker"
+      - type: bind
+        source: "./statics"
+        target: "/statics"
+      - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
+        source: "./repositories"
+        target: "/repositories"    
+    ports:
+      - "3000:3000"
+    env_file:
+      - './.env'      
+    command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
+
+  background-sync:
+    depends_on: 
+      - django
+    build: ./django-app/
+    env_file:
+      - './.env'
+    volumes:
+      - type: bind
+        source: "./django-app"
+        target: "/synker"
+      - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
+        source: "./repositories"
+        target: "/repositories"
+    command: bash -c 'python manage.py shell -c "from sync_utils.runner import run; run()"'
+
+  apache-php:
+    image: php:7.2-apache
+    ports:
+      - "3001:80"
+    volumes:
+      - type: bind
+        source: './repositories'
+        target: '/var/www/html'
