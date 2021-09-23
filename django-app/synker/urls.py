@@ -22,5 +22,6 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('', views.index, name="home"  ),
     path('search/', views.search_repo, name="search-repo"),
-    path('repo/<str:id>', views.repo, name="view-repo")
+    path('repo/<str:id>', views.repo, name="view-repo"),
+    path('stats/', views.stats, name="stats")
 ]

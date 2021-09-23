@@ -24,4 +24,4 @@ function displayRepoTree(struct){
 
 
 // init page for rendere
-renderer.src = `${PHP_SERVER}/renderer-default.html`
+renderer.src = `/stats`

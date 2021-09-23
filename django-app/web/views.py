@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from core.models import Repo
-from .utils import repoSerialize
+from .utils import repoSerialize, compute_stats
 
 
 def index(request):
@@ -28,3 +28,9 @@ def repo(request, id):
     data["struct"] = repo.dir_struct()
 
     return JsonResponse(data, safe=False)
+
+
+def stats(request):
+    response = render(request, "renderer-default.html", {"stats":compute_stats()})
+    response["X-Frame-Options"] = "SAMEORIGIN"
+    return response

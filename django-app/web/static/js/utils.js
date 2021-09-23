@@ -100,8 +100,25 @@ function repoAboutComponent(repo) {
         <div class="card-body">
             <h5 class="card-title">${repo.name}</h5>
             <h6 class="card-subtitle mb-2 text-muted">${repo.owner}</h6>
+            <p class="text-muted display-6" style="font-size: .9rem">${numberToReadable(repo.size)} Kb</p>
         </div>
     </div>
     `
 }
 
+function numberToReadable(number){
+    let formated_number = NaN
+    if (number !== "") {
+        try {
+            if (typeof (number) != "number") number = parseFloat(number)
+            formated_number = (Math.round((number + Number.EPSILON) * 1000) / 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        }
+        catch (e) {
+            console.log("Failed to format number.");
+        }
+    }
+    else {
+        formated_number = ""
+    }
+    return formated_number
+}

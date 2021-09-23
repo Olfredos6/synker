@@ -55,4 +55,3 @@ services:
       - type: bind
         source: './repositories'
         target: '/var/www/html'
-      - "./renderer-default.html:/var/www/html/renderer-default.html"
