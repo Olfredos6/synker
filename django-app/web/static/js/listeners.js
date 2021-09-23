@@ -28,6 +28,9 @@ $("body").on("click", ".repo-list-item", (e)=>{
         document.getElementById('tree').innerHTML = ""
         var tree = new Tree(document.getElementById('tree'));
         tree.json(structPrepareTreeJS(data.struct))
+
+        // for apps that live in the main dir
+        render(`${PHP_SERVER}/${inview_repo.repo.id}`)
     })
     
 })
@@ -35,5 +38,5 @@ $("body").on("click", ".repo-list-item", (e)=>{
 $("#tree").on("click", "summary[class=selected]", e => {
     // @TODO: Debounce
     const pathToDir = rebuildDirPath(e.target)
-    renderer.src = `${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`
+    render(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
 })

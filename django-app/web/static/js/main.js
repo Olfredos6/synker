@@ -22,6 +22,8 @@ function displayRepoTree(struct){
     tree.json(structPrepareTreeJS(struct))
 }
 
+function render(URL){
+    renderer.src = URL
+}
 
-// init page for rendere
-renderer.src = `/stats`
+render("/stats")
