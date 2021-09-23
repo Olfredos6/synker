@@ -104,3 +104,4 @@ function repoAboutComponent(repo) {
     </div>
     `
 }
+

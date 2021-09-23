@@ -1,8 +1,4 @@
 /** Elements' event listeners */
-const resultListElement = document.querySelector("#search-result")
-const renderer = document.querySelector("#renderer")
-let inview_repo = undefined
-const PHP_SERVER = "http://142.93.35.195:3001"
 
 document.querySelector("#txt-search").addEventListener("input", (e) => {
     let keyword = e.target.value
