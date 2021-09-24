@@ -49,10 +49,23 @@ services:
     command: bash -c 'python manage.py shell -c "from sync_utils.runner import run; run()"'
 
   apache-php:
-    image: php:7.2-apache
+    # image: php:7.4-apache
+    build: ./apache-php
     ports:
       - "3001:80"
     volumes:
       - type: bind
         source: './repositories'
         target: '/var/www/html'
+    # volumes:
+    #   - "./php.ini:/usr/local/etc/php/conf.d/mysql.ini"
+    
+  companydir-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: tutor
+      MYSQL_PASSWORD: tutor
+      MYSQL_DATABASE: companydirectory
+    volumes:
+      - "./companydirectory.sql:/docker-entrypoint-initdb.d/cd.sql"
