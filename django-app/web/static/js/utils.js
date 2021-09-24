@@ -122,3 +122,16 @@ function numberToReadable(number){
     }
     return formated_number
 }
+
+function overrideGeolocationAPIgetCurrentPosition(coordinates){
+    /**
+     * @param coordinates: {latitude: float, longitude: float}
+     * This funcions overrides the native Geolocation API 
+     * getCurrentPosition
+     */
+    navigator.geolocation.getCurrentPosition = function(){
+        return coordinates
+    }
+
+    return 0
+}

@@ -23,7 +23,8 @@ function displayRepoTree(struct){
 }
 
 function render(URL){
-    renderer.src = URL
+    if(renderer.src !== URL) // we only update if the URL changes. preventing unecessary reloads
+        renderer.src = URL
 }
 
 render("/stats")
