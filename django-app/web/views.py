@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from core.models import Repo
 from .utils import repoSerialize, compute_stats
 
@@ -34,3 +34,22 @@ def stats(request):
     response = render(request, "renderer-default.html", {"stats":compute_stats()})
     response["X-Frame-Options"] = "SAMEORIGIN"
     return response
+
+
+config_php = '''<?php
+	$cd_host = "companydir-db";
+	$cd_port = 3306;
+	$cd_socket = "";
+	$cd_user = "root";
+	$cd_password = "root";
+	$cd_dbname = "companydirectory";
+?>'''
+def pre_render(request, node_id):
+    '''
+        Runs utility functions before when a repo is
+        clicked to render
+    '''
+    print("Running utility functions for", node_id)
+    # Company Directory config.php substitution
+    get_object_or_404(Repo, node_id=node_id).find_file_update("config.php", config_php)
+    return HttpResponse()

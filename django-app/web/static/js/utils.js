@@ -135,3 +135,11 @@ function overrideGeolocationAPIgetCurrentPosition(coordinates){
 
     return 0
 }
+
+function runPreRenderUtilities(id){
+    return fetch(`/pre-render/${id}`)
+        .then(res => {
+            if(res.ok) return true
+            else{ return false}
+        })
+}

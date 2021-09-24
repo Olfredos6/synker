@@ -5,6 +5,7 @@ import subprocess
 from datetime import datetime
 from os import environ
 from pytz import utc as UTC
+import glob
 
 # from . import utils
 # from . import settings
@@ -47,13 +48,11 @@ class Repo(models.Model):
         '''
         pass
 
-
     @property
     def path(self):
         ''' returns the repo directory path '''
         return settings.SYNKER_REPO_DIR.joinpath(self.node_id)
 
-    
     def update_db(self, **payload):
         '''
             Updates the repo's data on on the databse. 
@@ -64,7 +63,6 @@ class Repo(models.Model):
         return Repo.objects.filter(node_id=self.node_id).update(
             updated_at=payload.get('updated_at')
         )
-
 
     def sync(self, timestamp:datetime = None)-> None:
         '''
@@ -116,7 +114,6 @@ class Repo(models.Model):
         
         return feedback
 
-
     def clone(self):
         ''' clone the repo using git's clone command '''
         # insert GitHub's auth_token inot repo's clone URL
@@ -125,12 +122,10 @@ class Repo(models.Model):
         cloning_proc = subprocess.run(['git', 'clone', authed_url, self.path ], capture_output=True)
         print(cloning_proc, cloning_proc.stdout)
 
-
     def pull(self):
         ''' git pull on the repo '''
         pull_proc = subprocess.run(['git', 'pull'], capture_output=True, cwd=self.path)
         # print(pull_proc, pull_proc.stdout)
-
 
     def track(self) -> None:
         ''' saves repo data to the db,
@@ -160,3 +155,18 @@ class Repo(models.Model):
             return parent
         
         return traverse(self.path,{"-": []})
+
+    def find_file_update(self, filename, content):
+        '''
+            Searches for a file in the repo's directory
+            and if found, updates its content with the 
+            given content.
+        '''
+        file = glob.glob(f"{self.path}/**/{filename}", recursive=True )
+        if not file:
+            return False
+        else:
+            print("updatinf file at", file[0])
+            with open(file[0], 'w') as f:
+                f.write(content)
+            return True

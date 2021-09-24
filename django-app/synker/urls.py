@@ -23,5 +23,6 @@ urlpatterns = [
     path('', views.index, name="home"  ),
     path('search/', views.search_repo, name="search-repo"),
     path('repo/<str:id>', views.repo, name="view-repo"),
-    path('stats/', views.stats, name="stats")
+    path('stats/', views.stats, name="stats"),
+    path('pre-render/<str:node_id>', views.pre_render, name="pre-render")
 ]
