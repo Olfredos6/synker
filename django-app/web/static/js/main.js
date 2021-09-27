@@ -1,8 +1,10 @@
 /** UI handling */
 const resultListElement = document.querySelector("#search-result")
 const renderer = document.querySelector("#renderer")
+const source_code_viewer = document.querySelector("#source-code")
 let inview_repo = undefined
-const PHP_SERVER = "http://142.93.35.195:3001"
+const DEFAULT_SERVER = "http://142.93.35.195"
+const PHP_SERVER = `${DEFAULT_SERVER}:3001`
 
 function showSearchResults(results) {
     let html = ""
@@ -26,6 +28,10 @@ function render(URL){
     if(inview_repo) runPreRenderUtilities(inview_repo.repo.id)
     if(renderer.src !== URL) // we only update if the URL changes. preventing unecessary reloads
         renderer.src = URL
+}
+
+function showSourceCode(port){
+    source_code_viewer.src = `${DEFAULT_SERVER}:${port}?folder=/source-code`
 }
 
 render("/stats")

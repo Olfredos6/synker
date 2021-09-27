@@ -40,3 +40,25 @@ $("#tree").on("click", "summary[class=selected]", e => {
     const pathToDir = rebuildDirPath(e.target)
     render(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
 })
+
+
+document.querySelector("#btn-code-tab").addEventListener("click", ()=>{
+    // starts live code-server on the current repo
+    requestCodeServer(inview_repo.repo.id)
+    .then(data => {
+        if(!data){ alert("Code-server failed to start") }
+        else{
+            showSourceCode(data.port)
+        }
+    })
+})
+
+
+document.querySelector("#nav-tab").addEventListener("cick", (e)=>{
+    /**
+     * after 5 minutes of not activating the source-code tab,
+     * sends a request to kill the container running the repo's
+     * code-server.
+     */
+    
+})

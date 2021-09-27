@@ -21,3 +21,4 @@ def compute_stats():
         "repo_count": repos.count(),
         "total_size": functools.reduce(lambda a,b: a+b, [r.size for r in repos])
     }
+

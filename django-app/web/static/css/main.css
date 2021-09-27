@@ -37,7 +37,7 @@ form>#search-result {
     font-size: 0.8em;
 }
 
-#renderer {
+iframe {
     width: 100%;
     height: 90vh;
 }

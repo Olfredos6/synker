@@ -170,3 +170,21 @@ class Repo(models.Model):
             with open(file[0], 'w') as f:
                 f.write(content)
             return True
+
+    def get_code_server(self):
+        '''
+            Starts a code-server instance and/or returns the port on
+            which the server runs.
+
+            Only the ports ranging from 4005 to 4010 are used.
+            @TODO:
+                Better management, better provisioning....
+        '''
+        from core.utils import is_port_in_use, start_code_server_instance
+        PORT = None
+        for port in range(4005, 4010):
+            if not is_port_in_use(port):
+                PORT = port
+                break
+        start_code_server_instance(PORT, self.path, self.node_id[:7])
+        return PORT

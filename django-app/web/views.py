@@ -53,3 +53,20 @@ def pre_render(request, node_id):
     # Company Directory config.php substitution
     get_object_or_404(Repo, node_id=node_id).find_file_update("config.php", config_php)
     return HttpResponse()
+
+
+def code_server(request, node_id):
+    '''
+        Process requests to start or get the container runninga code-server
+        instance on the current repo.
+
+        @TODO:
+            This implementation is not perfect at all imo!!
+            It needs more thinking...
+    '''
+    repo = get_object_or_404(Repo, node_id=node_id)
+    port = repo.get_code_server()
+    if port:
+        return JsonResponse({"port": port}, safe=False)
+    else:
+        return HttpResponse(500)

@@ -143,3 +143,15 @@ function runPreRenderUtilities(id){
             else{ return false}
         })
 }
+
+function requestCodeServer(node_id){
+    /**
+     * Sends a request to start a code-server instance or get the one on the repo with the given node_id.
+     * If the request was successfull, the reponse holds the port on which the server is running
+     */
+    return fetch(`/code-server/${node_id}`)
+    .then(res => {
+        if(res.ok) return res.json()
+        else { false }
+    })
+}
