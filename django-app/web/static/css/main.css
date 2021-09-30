@@ -1,7 +1,7 @@
 form>#search-result {
     position: absolute;
     top: 3rem;
-    width: 17rem;
+    /* width: 17rem; */
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 50vh;
@@ -33,6 +33,11 @@ form>#search-result {
     background-color: #f8f9fa;
 }
 
+.list-group>p{
+    margin: auto;
+}
+
+
 .repo-time {
     font-size: 0.8em;
 }
@@ -45,4 +50,9 @@ iframe {
 #tree {
     overflow: auto;
     padding-left: 0.2rem;
+}
+
+.btn-refresh-iframe {
+    padding-top: 10px;
+    margin-right: 5px;
 }

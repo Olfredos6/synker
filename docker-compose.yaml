@@ -1,5 +1,6 @@
 # DO NOT FORGET TO CONFIGURE NGINX ON HOST.
 # Nginx configuration sample found inside ./synker.conf
+# while true; do eval "$(cat ./pipes)"; done
 version: "3.2"
 
 services:

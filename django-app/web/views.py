@@ -26,6 +26,8 @@ def repo(request, id):
     repo = get_object_or_404(Repo, node_id=id)
     data["repo"] = repoSerialize(repo)
     data["struct"] = repo.dir_struct()
+    from core.utils import pipeCMD
+    print("PIPE CMD RETURNED ---->", pipeCMD("ls -al"))
 
     return JsonResponse(data, safe=False)
 
@@ -65,8 +67,16 @@ def code_server(request, node_id):
             It needs more thinking...
     '''
     repo = get_object_or_404(Repo, node_id=node_id)
+    print("Provision request for", repo.short, repo.full_name)
     port = repo.get_code_server()
     if port:
         return JsonResponse({"port": port}, safe=False)
     else:
-        return HttpResponse(500)
+        return HttpResponse(status_code=500)
+
+def kill_code_server(request, node_id):
+    repo = get_object_or_404(Repo, node_id=node_id)
+    repo.kill_code_server()
+    return HttpResponse(200)
+
+

@@ -6,6 +6,7 @@ from datetime import datetime
 from os import environ
 from pytz import utc as UTC
 import glob
+from time import sleep 
 
 # from . import utils
 # from . import settings
@@ -16,12 +17,25 @@ class Repo(models.Model):
    
     node_id = models.CharField(max_length=32, null=False, primary_key=True)
     type = models.CharField(max_length=10, null=False)
+    _name = models.CharField(max_length=100, null=True)
     full_name = models.CharField(max_length=100)
     updated_at = models.DateTimeField(null=True)
     url = models.URLField(max_length=10, null=False)
     clone_url = models.URLField(max_length=10, null=False)
     size = models.IntegerField()
     owner_login = models.CharField(max_length=100, null=False)
+
+    @property
+    def name(self):
+        '''
+            Returns repo name. if _name is null, computes it
+            from full_name
+        '''
+        if self._name:
+            return self._name
+        else:
+            x = self.full_name
+            return x[x.index("/")+1:]
 
 
     @staticmethod
@@ -32,6 +46,7 @@ class Repo(models.Model):
         new_repo = Repo()
         new_repo.type = type
         new_repo.node_id = kwargs.get('node_id')
+        new_repo.name = kwargs.get('name')
         new_repo.full_name = kwargs.get('full_name')
         new_repo.updated_at = kwargs.get('updated_at')
         new_repo.clone_url = kwargs.get('clone_url')
@@ -52,6 +67,15 @@ class Repo(models.Model):
     def path(self):
         ''' returns the repo directory path '''
         return settings.SYNKER_REPO_DIR.joinpath(self.node_id)
+
+    @property
+    def short(self):
+        return self.node_id[-10:][:-1]
+    
+    @property
+    def folder_name(self):
+        ''' Valid name to use for code-server '''
+        return f"{self.owner_login}__{self.name}"
 
     def update_db(self, **payload):
         '''
@@ -180,11 +204,90 @@ class Repo(models.Model):
             @TODO:
                 Better management, better provisioning....
         '''
-        from core.utils import is_port_in_use, start_code_server_instance
-        PORT = None
-        for port in range(4005, 4010):
-            if not is_port_in_use(port):
-                PORT = port
-                break
-        start_code_server_instance(PORT, self.path, self.node_id[:7])
-        return PORT
+        print(CodeServerPort.objects.all())
+        from core.utils import start_code_server_instance
+        port = CodeServerPort.provision(self.folder_name)
+        # we must wait a lil here
+        print("Wainting 5 seconds...")
+        sleep(5) # I do not like this but we do this for now
+        print("Starting new instance after 5 seconds...")
+        # @TODO Wainting 5 seconds is not enough....no gurantee given
+        start_code_server_instance(port, self.path, self.folder_name)
+
+        return port
+    
+    def kill_code_server(self):
+        from core.utils import kill_code_server_instance
+        kill_code_server_instance(self.folder_name)
+        CodeServerPort.objects.get(container=self.folder_name).delete()
+
+
+class CodeServerPort(models.Model):
+    # Port manager for code-server instances
+    date_assigned = models.DateTimeField(auto_now_add=True, null=True)
+    number = models.IntegerField(primary_key=True)
+    container = models.CharField(max_length=15, null=True)
+
+    @staticmethod
+    def free_one():
+        # returns an unused port between 4005 and 4015
+        free_ports = [ number for number in range(4005, 4008) if number not in [port.number for port in CodeServerPort.objects.all()] ]
+        print("Found FREE PORTS", free_ports)
+        if len(free_ports) == 0:
+            # kill the oldest and return its number
+            oldest = CodeServerPort.objects.all().order_by('date_assigned')
+            print("Found PORTS in use")
+            for i in oldest:
+                print(i.date_assigned, i.container, i.number)
+            
+            oldest = oldest[0]
+            port = oldest.number
+
+            oldest.destroy()
+            from core.utils import kill_code_server_instance
+            kill_code_server_instance(oldest.container)
+
+            oldest.delete()
+            return port
+
+        else: 
+            return free_ports[0]
+    
+
+    @staticmethod
+    def kill(container_name):
+        from core.utils import kill_code_server_instance
+        kill_code_server_instance(container_name)
+        CodeServerPort.objects.filter(container=container_name).delete()
+
+    
+    def destroy(self):
+        ''' Kill process running on port on Host '''
+        from core.utils import pipeCMD
+        print("PORT.DESTROY {self.number} output --->", pipeCMD(f"kill -9 $(lsof -t -i tcp:{self.number})"))
+
+    
+    @staticmethod
+    def provision(container_name):
+        existing_port = CodeServerPort.objects.filter(container=container_name)
+        port = None
+        if not existing_port.exists():
+            port = CodeServerPort.objects.create(number=CodeServerPort.free_one(), container=container_name)
+            print("~~~~> Provisioned port", port, port.number, port.container, port.date_assigned)
+        else:
+            port = existing_port[0]
+            print("Container already running on port", existing_port[0].number)
+            return existing_port[0].number
+        
+        return port.number
+
+    '''
+    @TODO docker ps -a on host to list only names of running containers, see if one exists with the repo's short name.
+    If not, grab the oldest(see if you can parse the output from docker ps) and kill. provision it....
+    '''
+
+    @staticmethod
+    def kill_all():
+        for p in CodeServerPort.objects.all():
+            print(CodeServerPort.kill(p.container))
+        

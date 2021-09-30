@@ -9,8 +9,12 @@ document.querySelector("#txt-search").addEventListener("input", (e) => {
         searchRepo(e.target.value).then(results => showSearchResults(results))
     } else {
         // make sure to hide it
-        resultListElement.innerHTML = ""
+        resultListElement.innerHTML = "<p>No repo found</p>"
     }
+})
+
+document.querySelector(".btn-refresh-iframe").addEventListener('click', (e)=>{
+    render(renderer.src, true)
 })
 
 $("body").on("click", ".repo-list-item", (e)=>{
@@ -46,19 +50,28 @@ document.querySelector("#btn-code-tab").addEventListener("click", ()=>{
     // starts live code-server on the current repo
     requestCodeServer(inview_repo.repo.id)
     .then(data => {
-        if(!data){ alert("Code-server failed to start") }
+        if(!data){ 
+            killCodeServer(inview_repo.repo.id)
+            killCodeServerView()
+            alert("Code-server failed to start")
+            BTN_TAB_CODE.classList.remove("disabled")
+        }
         else{
             showSourceCode(data.port)
         }
     })
 })
 
-
+let kill_code_server_timeout = null
 document.querySelector("#nav-tab").addEventListener("cick", (e)=>{
     /**
      * after 5 minutes of not activating the source-code tab,
      * sends a request to kill the container running the repo's
      * code-server.
      */
-    
+    if(e.target != BTN_TAB_CODE){
+        kill_code_server_timeout = setTimeout(killCodeServer, 50000)
+    }else{
+        clearTimeout(kill_code_server_timeout)
+    }
 })
