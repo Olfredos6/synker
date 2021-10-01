@@ -89,6 +89,51 @@ class Repo(models.Model):
             updated_at=payload.get('updated_at')
         )
 
+    ## GIT TIGHT Methods
+    def run_cmd(self, cmd: list)-> str:
+        '''
+            A general way for running commands on
+            a repo's directory. 
+            One of the justification is that we will always
+            need to make sure that we are in the right directory before
+            executing for instance a git command on a repo 
+        '''
+        process = subprocess.run(cmd, capture_output=True, cwd=self.path)
+        return process.stdout.decode("utf-8")
+
+    def clone(self):
+        ''' clone the repo using git's clone command '''
+        # insert GitHub's auth_token inot repo's clone URL
+        authed_url = self.clone_url.replace("github.com", f"{environ.get('GITHUB_TOKEN')}@github.com")
+        # print("New URL", authed_url)
+        # cloning_proc = subprocess.run(['git', 'clone', authed_url, self.path ], capture_output=True)
+        # print(cloning_proc, cloning_proc.stdout)
+        print(self.run_cmd(['git', 'clone', authed_url, self.path ]))
+
+    def pull(self):
+        ''' git pull on the repo '''
+        print(self.run_cmd((['git', 'pull'])))
+
+    @property
+    def was_edited(self):
+        '''
+            Excutes git status on the repo to check if it has been edited.
+            If yes, return True, else False 
+        '''
+        # st_proc = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, cwd=self.path)
+        r = self.run_cmd(['git', 'status', '--porcelain'])
+        print(r)
+        if r == "":
+            return False
+        else:
+            return True
+    
+    def reset(self):
+        '''
+            Repo git reset --hard
+        '''
+        print(self.run_cmd(["git", "reset", "--hard"]))
+
     def sync(self, timestamp:datetime = None)-> None:
         '''
         Syncs a repository. 
@@ -138,19 +183,8 @@ class Repo(models.Model):
                 feedback = 1
         
         return feedback
-
-    def clone(self):
-        ''' clone the repo using git's clone command '''
-        # insert GitHub's auth_token inot repo's clone URL
-        authed_url = self.clone_url.replace("github.com", f"{environ.get('GITHUB_TOKEN')}@github.com")
-        # print("New URL", authed_url)
-        cloning_proc = subprocess.run(['git', 'clone', authed_url, self.path ], capture_output=True)
-        print(cloning_proc, cloning_proc.stdout)
-
-    def pull(self):
-        ''' git pull on the repo '''
-        pull_proc = subprocess.run(['git', 'pull'], capture_output=True, cwd=self.path)
-        print(pull_proc, pull_proc.stdout)
+    
+    ## .GIT TIGHT Methods
 
     def track(self) -> None:
         ''' saves repo data to the db,
@@ -222,19 +256,6 @@ class Repo(models.Model):
         kill_code_server_instance(self.folder_name)
         CodeServerPort.objects.get(container=self.folder_name).delete()
     
-    @property
-    def was_edited(self):
-        '''
-            Excutes git status on the repo to check if it has been edited.
-            If yes, return True, else False 
-        '''
-        st_proc = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, cwd=self.path)
-        print(st_proc.stdout.decode("utf-8"))
-        if st_proc.stdout.decode("utf-8") == "":
-            return False
-        else:
-            return True
-
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances
