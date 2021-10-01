@@ -199,3 +199,23 @@ function poolStatus(condition, callback, timeout=1) {
         }
     }, 500)
 }
+
+function checkInViewRepoWasEdited(){
+    /**
+     * sends a request to check if the repo in view was edited.
+     * returns:
+     *  0 if not
+     *  1 if true
+     *  -1 if the request failed
+     */
+    
+    return fetch(`/repo/${inview_repo.repo.id}/was_edited`)
+    .then(res => {
+        if(!res.ok){
+            console.log("Could not check this repo was edited", res.status, res.statusText)
+            return {"was_edited": -1}
+        }
+        return res.json()
+    })
+    .then( data => data.was_edited )
+}

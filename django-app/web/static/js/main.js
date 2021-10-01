@@ -7,6 +7,7 @@ const source_code_viewer = document.querySelector("#source-code")
 let inview_repo = undefined
 const DEFAULT_SERVER = "http://142.93.35.195"
 const PHP_SERVER = `${DEFAULT_SERVER}:3001`
+let REPO_WAS_EDITED = 0
 
 function showSearchResults(results) {
     let html = ""

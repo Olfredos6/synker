@@ -28,6 +28,7 @@ $("body").on("click", ".repo-list-item", (e)=>{
     .then( data => {
         // top, display repo name, user, and last updated time
         inview_repo = data
+
         document.querySelector("#repo-about").innerHTML = repoAboutComponent(data.repo)
         document.getElementById('tree').innerHTML = ""
         var tree = new Tree(document.getElementById('tree'));
@@ -35,8 +36,23 @@ $("body").on("click", ".repo-list-item", (e)=>{
 
         // for apps that live in the main dir
         render(`${PHP_SERVER}/${inview_repo.repo.id}`)
+
+        
+        checkInViewRepoWasEdited()
+        .then(status => REPO_WAS_EDITED = status)
     })
     
+})
+
+
+document.querySelector("#txt-search").addEventListener('click', ()=>{
+    // check if the repo in view was edited and notify before leaving
+    if(inview_repo){
+        checkInViewRepoWasEdited()
+        .then(status => REPO_WAS_EDITED = status)
+    }
+    else
+    REPO_WAS_EDITED = 999
 })
 
 $("#tree").on("click", "summary[class=selected]", e => {
@@ -48,7 +64,7 @@ $("#tree").on("click", "summary[class=selected]", e => {
 
 document.querySelector("#btn-code-tab").addEventListener("click", ()=>{
     // starts live code-server on the current repo
-    requestCodeServer(inview_repo.repo.id)
+    if(inview_repo) requestCodeServer(inview_repo.repo.id)
     .then(data => {
         if(!data){ 
             killCodeServer(inview_repo.repo.id)

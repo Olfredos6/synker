@@ -56,3 +56,13 @@ iframe {
     padding-top: 10px;
     margin-right: 5px;
 }
+
+.edit-notif {
+    position: absolute;
+    float: right;
+    right: 0;
+}
+
+.edit-notif > * {    
+    display: none;
+}

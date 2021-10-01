@@ -53,6 +53,9 @@
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="btn-code-tab" data-bs-toggle="tab" data-bs-target="#source-code" type="button" role="tab" aria-controls="source-code" aria-selected="false">Code</button>
           </li>
+          <div class="nav-item float-end edit-notif">
+            <p id="edit-status"> repo was edited </p>
+          </div>
         </ul>
         <div class="tab-content" id="nav-tab-content">
           <!-- <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div> -->
@@ -72,6 +75,7 @@
   <script src="{% static 'js/utils.js' %}"></script>
   <script src="{% static 'js/main.js' %}"></script>
   <script src="{% static 'js/listeners.js' %}"></script>
+  <script src="{% static 'js/background-process.js' %}"></script>
 </body>
 
 </html>

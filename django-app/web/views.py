@@ -80,3 +80,6 @@ def kill_code_server(request, node_id):
     return HttpResponse(200)
 
 
+def repo_was_edited(request, id):
+    repo = get_object_or_404(Repo, node_id=id)
+    return JsonResponse({"was_edited": 1 if repo.was_edited else 0 }, safe=False)

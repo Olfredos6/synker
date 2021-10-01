@@ -37,7 +37,6 @@ class Repo(models.Model):
             x = self.full_name
             return x[x.index("/")+1:]
 
-
     @staticmethod
     def create_from_payload(type, **kwargs):
         '''
@@ -111,7 +110,10 @@ class Repo(models.Model):
         print(self.run_cmd(['git', 'clone', authed_url, self.path ]))
 
     def pull(self):
-        ''' git pull on the repo '''
+        ''' git pull on the repo 
+            @TODO ensure we can monitor weither this operation was
+            successfull or not. Perhaps a git pull flag?
+        '''
         print(self.run_cmd((['git', 'pull'])))
 
     @property
@@ -178,6 +180,10 @@ class Repo(models.Model):
             # print(f"will only update if {self.updated_at} is greater than {timestamp.replace(tzinfo=UTC)}")
             if self.updated_at < timestamp.replace(tzinfo=UTC):
                 # print(f"Updating/pulling {self.full_name}")
+                # first check if the repo was edited locally, reset it if necessary
+                if self.was_edited:
+                    self.reset()
+
                 self.pull()
                 self.update_db(updated_at=timestamp)
                 feedback = 1
