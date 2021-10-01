@@ -43,10 +43,11 @@ class Repo(models.Model):
         '''
             Simplifies creating Repo objects using GitHub's repository payload
         '''
+        print(kwargs)
         new_repo = Repo()
         new_repo.type = type
         new_repo.node_id = kwargs.get('node_id')
-        new_repo.name = kwargs.get('name')
+        new_repo._name = kwargs.get('name')
         new_repo.full_name = kwargs.get('full_name')
         new_repo.updated_at = kwargs.get('updated_at')
         new_repo.clone_url = kwargs.get('clone_url')
@@ -231,7 +232,7 @@ class CodeServerPort(models.Model):
     @staticmethod
     def free_one():
         # returns an unused port between 4005 and 4015
-        free_ports = [ number for number in range(4005, 4008) if number not in [port.number for port in CodeServerPort.objects.all()] ]
+        free_ports = [ number for number in range(4005, 4011) if number not in [port.number for port in CodeServerPort.objects.all()] ]
         print("Found FREE PORTS", free_ports)
         if len(free_ports) == 0:
             # kill the oldest and return its number
