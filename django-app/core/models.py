@@ -150,7 +150,7 @@ class Repo(models.Model):
     def pull(self):
         ''' git pull on the repo '''
         pull_proc = subprocess.run(['git', 'pull'], capture_output=True, cwd=self.path)
-        # print(pull_proc, pull_proc.stdout)
+        print(pull_proc, pull_proc.stdout)
 
     def track(self) -> None:
         ''' saves repo data to the db,
@@ -221,6 +221,19 @@ class Repo(models.Model):
         from core.utils import kill_code_server_instance
         kill_code_server_instance(self.folder_name)
         CodeServerPort.objects.get(container=self.folder_name).delete()
+    
+    @property
+    def was_edited(self):
+        '''
+            Excutes git status on the repo to check if it has been edited.
+            If yes, return True, else False 
+        '''
+        st_proc = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, cwd=self.path)
+        print(st_proc.stdout.decode("utf-8"))
+        if st_proc.stdout.decode("utf-8") == "":
+            return False
+        else:
+            return True
 
 
 class CodeServerPort(models.Model):
