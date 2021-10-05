@@ -5,17 +5,17 @@ function notify(message) {
 }
 
 function searchRepo(keyword) {
-    if(keyword.length > 0)
-    return fetch(`/search?keyword=${keyword}`)
-        .then(res => {
-            if (!res.ok) {
-                notify(res.status + " - " + res.statusText)
-                return []
-            }
-            return res.json()
-        })
+    if (keyword.length > 0)
+        return fetch(`/search?keyword=${keyword}`)
+            .then(res => {
+                if (!res.ok) {
+                    notify(res.status + " - " + res.statusText)
+                    return []
+                }
+                return res.json()
+            })
     else
-    return []
+        return []
 }
 
 function getRepository(id) {
@@ -99,7 +99,8 @@ function repoAboutComponent(repo) {
     return `
     <div class="card">
         <div class="card-footer text-muted repo-time">
-        Last updated: <br/> ${updated_at.toDateString()} - ${updated_at.toLocaleTimeString()}
+            <i class="bi bi-pencil-square edit-repo-info" data-bs-toggle="modal" data-bs-target="#modal-repo-edit"></i>
+            Last updated: <br/> ${updated_at.toDateString()} - ${updated_at.toLocaleTimeString()}
         </div>
         <div class="card-body">
             <h5 class="card-title">
@@ -111,6 +112,41 @@ function repoAboutComponent(repo) {
         </div>
     </div>
     `
+}
+
+function repoBranchManagamentComponent(repo){
+    /**
+     * Displays branching info and management
+     * options such as branch checkout
+     */
+    return `
+    <div class="card">
+        <div class="card-footer text-muted repo-time">
+            Current Branch: <br/> ${repo.current_branch}
+        </div>
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Switch branches:</h6>
+            <select class="form-select" aria-label="Default select example" id="sel-switch-branch">
+                <option selected>${repo.current_branch}</option>
+                ${ repo.branches.splice(1).map( branch => `<option value="${branch}">${branch}</option>`) }
+            </select>
+        </div>
+    </div>
+    `
+
+}
+
+function formToJSON(form_name) {
+    let formData = new FormData(document.querySelector(`[name=${form_name}]`))
+    let jsonData = {}
+    formData.forEach((value, key) => {
+        if (!isNaN(value)) {
+            if (value.indexOf(".")) value = parseFloat(value)
+            else { value = parseInt(value) }
+        }
+        jsonData[key] = value
+    })
+    return jsonData
 }
 
 function numberToReadable(number) {
@@ -175,7 +211,7 @@ function killCodeServer(node_id) {
 }
 
 
-function poolStatus(condition, callback, timeout=1) {
+function poolStatus(condition, callback, timeout = 1) {
     /**
      * @param timeout in seconds
      */
@@ -195,12 +231,12 @@ function poolStatus(condition, callback, timeout=1) {
             setTimeout(() => {
                 document.querySelector("#loader").remove()
                 callback()
-            }, timeout*1000)
+            }, timeout * 1000)
         }
     }, 500)
 }
 
-function checkInViewRepoWasEdited(){
+function checkInViewRepoWasEdited() {
     /**
      * sends a request to check if the repo in view was edited.
      * returns:
@@ -208,14 +244,14 @@ function checkInViewRepoWasEdited(){
      *  1 if true
      *  -1 if the request failed
      */
-    
+
     return fetch(`/repo/${inview_repo.repo.id}/was_edited`)
-    .then(res => {
-        if(!res.ok){
-            console.log("Could not check this repo was edited", res.status, res.statusText)
-            return {"was_edited": -1}
-        }
-        return res.json()
-    })
-    .then( data => data.was_edited )
+        .then(res => {
+            if (!res.ok) {
+                console.log("Could not check this repo was edited", res.status, res.statusText)
+                return { "was_edited": -1 }
+            }
+            return res.json()
+        })
+        .then(data => data.was_edited)
 }

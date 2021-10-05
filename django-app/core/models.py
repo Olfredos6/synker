@@ -13,9 +13,16 @@ from time import sleep
 # from . import db
 
 
+class Student(models.Model):
+    customer_no = models.IntegerField(primary_key=True)
+    surname = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=150)
+
+
 class Repo(models.Model):
-   
     node_id = models.CharField(max_length=32, null=False, primary_key=True)
+    student = models.ForeignKey(Student, related_name="st_owner", on_delete=models.PROTECT, null=True)
     type = models.CharField(max_length=10, null=False)
     _name = models.CharField(max_length=100, null=True)
     full_name = models.CharField(max_length=100)
@@ -115,6 +122,30 @@ class Repo(models.Model):
             successfull or not. Perhaps a git pull flag?
         '''
         print(self.run_cmd((['git', 'pull'])))
+
+    @property
+    def branches(self):
+        return [ b.strip() for b in self.run_cmd(["git","branch","--list","-a"]).split("\n ")]
+
+    @property
+    def branch(self):
+        '''returns current branch'''
+        return self.run_cmd(["git", "branch"]).replace("* ", "").replace("\n", "")
+    
+    def checkout(self, branch_name:str):
+        '''
+            Allows switching between branches
+        '''
+        # first check if branch exists
+        if branch_name not in self.branches:
+            raise ValueError(f"Branch {branch_name} does not exist")
+
+        # check if repo was edited, if true, reset it first
+        if self.was_edited:
+            self.reset()
+        
+        return self.run_cmd(["git", "checkout", branch_name])
+        
 
     @property
     def was_edited(self):
@@ -261,7 +292,7 @@ class Repo(models.Model):
         from core.utils import kill_code_server_instance
         kill_code_server_instance(self.folder_name)
         CodeServerPort.objects.get(container=self.folder_name).delete()
-    
+
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances

@@ -4,10 +4,12 @@ const renderer = document.querySelector("#renderer")
 const BTN_TAB_RENDERER = document.querySelector("#btn-renderer-tab")
 const BTN_TAB_CODE = document.querySelector("#btn-code-tab")
 const source_code_viewer = document.querySelector("#source-code")
+const NODE_ID_DISPLAY = document.querySelector("#repo-node-display")
 let inview_repo = undefined
 const DEFAULT_SERVER = "http://142.93.35.195"
 const PHP_SERVER = `${DEFAULT_SERVER}:3001`
 let REPO_WAS_EDITED = 0
+const CSRF_TOKEN = undefined
 
 function showSearchResults(results) {
     let html = ""
@@ -18,6 +20,24 @@ function showSearchResults(results) {
         });
     }
     document.querySelector("#search-result").innerHTML = html
+}
+
+function displayRepo(repo_data){
+    // top, display repo name, user, and last updated time
+    inview_repo = repo_data
+        
+    NODE_ID_DISPLAY.innerText = inview_repo.repo.id
+    document.querySelector("#repo-about").innerHTML = repoAboutComponent(inview_repo.repo) + repoBranchManagamentComponent(inview_repo.repo)
+    document.getElementById('tree').innerHTML = ""
+    var tree = new Tree(document.getElementById('tree'));
+    tree.json(structPrepareTreeJS(inview_repo.struct))
+
+    // for apps that live in the main dir
+    render(`${PHP_SERVER}/${inview_repo.repo.id}`)
+
+    
+    checkInViewRepoWasEdited()
+    .then(status => REPO_WAS_EDITED = status)
 }
 
 function displayRepoTree(struct) {
@@ -56,12 +76,30 @@ function showSourceCode(port) {
             }, 5)
 }
 
-
 function killCodeServerView() {
     source_code_viewer.src = ""
     BTN_TAB_CODE.innerText = "Code"
     BTN_TAB_CODE.classList.add("disabled")
     BTN_TAB_RENDERER.click()
+}
+
+function createOrUpdateRepoStudentInfo(data){
+    return fetch(`/repo/${inview_repo.repo.id}/student`, {
+        method: "POST",
+        body: { ...data, csrfTokenMiddleware: CSRF_TOKEN }
+    })
+    .then(res => {
+        if(!res.ok){
+            notify("Failed to create or update repo's student info: " + res.responseText)
+            return null
+        }
+        return res.json()
+    })
+}
+
+function repoCheckoutBranch(repo_id, branch){
+    // using query string because branch names can be tricky to handle
+    return fetch(`/repo/${repo_id}/branches/checkout?b=${branch}`)
 }
 
 render("/stats")

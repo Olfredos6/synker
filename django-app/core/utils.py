@@ -32,7 +32,7 @@ def pipeCMD(cmd: str) -> str:
     '''
     import subprocess
 
-    print(f"Running the command {cmd} throuhg the system's named pipe")
+    print(f"PIPING:\n\t    {cmd}")
     code = subprocess.run(
         f'''echo '{cmd}' > /hostpipe''',
         shell=True,

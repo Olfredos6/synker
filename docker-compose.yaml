@@ -39,6 +39,7 @@ services:
     environment:
       - APP_HOST_DIR=$PWD
     command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
+    # command: bash -c 'gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
 
   background-sync:
     restart: always

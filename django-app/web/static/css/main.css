@@ -66,3 +66,21 @@ iframe {
 .edit-notif > * {    
     display: none;
 }
+
+.edit-repo-info {
+    position: absolute;
+    top: 0;
+    right: .19rem;
+    font-size: large;
+    color: #1f59db;
+    cursor: pointer;
+}
+
+.edit-repo-info:hover {
+    color: #18d7b4;
+}
+
+.bottom-feeder {
+    position: absolute;
+    font-size: 0.6rem;
+}

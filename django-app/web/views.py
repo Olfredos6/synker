@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from core.models import Repo
-from .utils import repoSerialize, compute_stats
+from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
 
 
 def index(request):
     return render(request, 'index.html', {})
+
 
 def search_repo(request):
     keyword = request.GET.get('keyword')
@@ -16,20 +17,23 @@ def search_repo(request):
 
 
 def repo(request, id):
-    '''
-    collects necessary data about a repository. That is:
-     - repo object data
-     - repo directory structure
-    '''
+    return JsonResponse(get_json_parsable_repo_data(id), safe=False)
 
-    data = {"repo": None, "struct": None}
-    repo = get_object_or_404(Repo, node_id=id)
-    data["repo"] = repoSerialize(repo)
-    data["struct"] = repo.dir_struct()
-    from core.utils import pipeCMD
-    print("PIPE CMD RETURNED ---->", pipeCMD("ls -al"))
 
-    return JsonResponse(data, safe=False)
+def student_info(request, node_id):
+    '''
+        Edit a repo's related student's info
+    '''
+    repo = get_object_or_404(Repo, node_id=node_id)
+    if request.method == "POST":
+        print("REQUEST DATA", **request.POST)
+        student = Student.objects.update_or_create(
+            repo=repo,
+            **request.POST
+            )
+        return JsonReponse(repoSerialize(get_object_or_404(Repo, node_id=node_id)))
+    else:
+        return JsonRsponse(data=serializeStudent(repo.student), safe=False)
 
 
 def stats(request):
@@ -74,6 +78,7 @@ def code_server(request, node_id):
     else:
         return HttpResponse(status_code=500)
 
+
 def kill_code_server(request, node_id):
     repo = get_object_or_404(Repo, node_id=node_id)
     repo.kill_code_server()
@@ -83,3 +88,13 @@ def kill_code_server(request, node_id):
 def repo_was_edited(request, id):
     repo = get_object_or_404(Repo, node_id=id)
     return JsonResponse({"was_edited": 1 if repo.was_edited else 0 }, safe=False)
+
+
+def repo_checkout_branch(request, id):
+    '''
+        git checkout branch on repo
+    '''
+    print("Checkig out", request.GET.get("b"))
+    repo = get_object_or_404(Repo, node_id=id)
+    repo.checkout(request.GET.get("b"))
+    return JsonResponse(get_json_parsable_repo_data(id), safe=False)
