@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from core.models import Repo, Student
+from django.db.models import Q
 from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
 import json
 
@@ -12,7 +13,7 @@ def index(request):
 def search_repo(request):
     keyword = request.GET.get('keyword')
     data = []
-    for repo in Repo.objects.filter(full_name__icontains=keyword):
+    for repo in Repo.objects.filter( Q(full_name__icontains=keyword) | Q(student__name__icontains=keyword) | Q(student__surname__icontains=keyword)| Q(student__customer_no__contains=keyword)| Q(student__email__contains=keyword) ):
         data.append(repoSerialize(repo))
     return JsonResponse(data, safe=False)
 
