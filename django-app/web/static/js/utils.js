@@ -99,7 +99,7 @@ function repoAboutComponent(repo) {
     return `
     <div class="card">
         <div class="card-footer text-muted repo-time">
-            <i class="bi bi-pencil-square edit-repo-info" data-bs-toggle="modal" data-bs-target="#modal-repo-edit"></i>
+            <i class="bi bi-pencil-square edit-repo-info" data-bs-toggle="modal" data-bs-target="#modal-repo-info"></i>
             Last updated: <br/> ${updated_at.toDateString()} - ${updated_at.toLocaleTimeString()}
         </div>
         <div class="card-body">

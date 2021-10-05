@@ -31,6 +31,7 @@ class Repo(models.Model):
     clone_url = models.URLField(max_length=10, null=False)
     size = models.IntegerField()
     owner_login = models.CharField(max_length=100, null=False)
+    student = models.ForeignKey(Student, related_name="student", on_delete=models.PROTECT, null=True)
 
     @property
     def name(self):
@@ -94,6 +95,13 @@ class Repo(models.Model):
         return Repo.objects.filter(node_id=self.node_id).update(
             updated_at=payload.get('updated_at')
         )
+
+    def set_student(self, student: Student):
+        '''
+            sets repo's student and returns updated repo object
+        '''
+        Repo.objects.filter(node_id=self.node_id).update(student=student)
+        return Repo.objects.get(node_id=self.node_id)
 
     ## GIT TIGHT Methods
     def run_cmd(self, cmd: list)-> str:

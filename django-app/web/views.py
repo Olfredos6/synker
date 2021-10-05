@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
-from core.models import Repo
+from core.models import Repo, Student
 from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
+import json
 
 
 def index(request):
@@ -26,14 +27,23 @@ def student_info(request, node_id):
     '''
     repo = get_object_or_404(Repo, node_id=node_id)
     if request.method == "POST":
-        print("REQUEST DATA", **request.POST)
-        student = Student.objects.update_or_create(
-            repo=repo,
-            **request.POST
-            )
-        return JsonReponse(repoSerialize(get_object_or_404(Repo, node_id=node_id)))
+        # print("REUET____>", json.loads(request.body))
+        data = json.loads(request.body)
+        student = None
+        # if a student with the given details does not exists, create and assign to repo
+        student_match = Student.objects.filter(customer_no=data.get("customer_no"))
+        if not student_match.exists():
+            student = Student.objects.create(**{i:data.get(i) for i in data if i != 'csrfmiddlewaretoken' })# updates repo's student info
+            repo.set_student(student)
+        else:
+            student = student_match[0]
+            data = {i:data.get(i) for i in data if i not in ['csrfmiddlewaretoken', 'customer_no'] }
+            print("Existing student --->", student, repo.student, "\nUpdating using", data)
+            Student.objects.filter(customer_no=repo.student.customer_no).update(**data)
+        
+        return JsonResponse(repoSerialize(get_object_or_404(Repo, node_id=node_id)))
     else:
-        return JsonRsponse(data=serializeStudent(repo.student), safe=False)
+        return JsonResponse(data=serializeStudent(repo.student), safe=False)
 
 
 def stats(request):

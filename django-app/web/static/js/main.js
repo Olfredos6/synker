@@ -86,11 +86,16 @@ function killCodeServerView() {
 function createOrUpdateRepoStudentInfo(data){
     return fetch(`/repo/${inview_repo.repo.id}/student`, {
         method: "POST",
-        body: { ...data, csrfTokenMiddleware: CSRF_TOKEN }
+        body: JSON.stringify(data),
+        headers: {
+            "X-CSRFToken": data.csrfmiddlewaretoken,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
     })
     .then(res => {
         if(!res.ok){
-            notify("Failed to create or update repo's student info: " + res.responseText)
+            notify("Failed to create or update repo's student info: " + res.statusText)
             return null
         }
         return res.json()

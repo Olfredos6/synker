@@ -16,18 +16,21 @@ def repoSerialize(repo: Repo):
         "size": repo.size,
         "folder": repo.folder_name,
         'current_branch': repo.branch,
-        'branches': repo.branches
-        # "student": serializeStudent(repo.student)
+        'branches': repo.branches,
+        "student": serializeStudent(repo.student)
     }
 
 
 def serializeStudent(student: Student) -> dict:
-    return {
-        "customer_no": student.customer_no,
-        "surname": student.surname,
-        "name": student.name,
-        "email": student.email
-    }
+    if student:
+        return {
+            "customer_no": student.customer_no,
+            "surname": student.surname,
+            "name": student.name,
+            "email": student.email
+        }
+    else:
+        return {"detail": "Student was never set."}
 
 
 def get_json_parsable_repo_data(id):

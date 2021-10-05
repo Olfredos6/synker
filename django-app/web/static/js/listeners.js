@@ -4,9 +4,11 @@ document.querySelector("#txt-search").addEventListener("input", (e) => {
     let keyword = e.target.value
 
     if (keyword !== "") {
-        resultListElement.innerHTML = spinnerComponent("searching...")
 
-        searchRepo(e.target.value).then(results => showSearchResults(results))
+        if(keyword.length > 3) {
+            resultListElement.innerHTML = spinnerComponent("searching...")    
+            searchRepo(e.target.value).then(results => showSearchResults(results))
+        }
     } else {
         // make sure to hide it
         resultListElement.innerHTML = "<p>No repo found</p>"
