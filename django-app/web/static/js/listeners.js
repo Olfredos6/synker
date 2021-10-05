@@ -48,6 +48,7 @@ $("#tree").on("click", "summary[class=selected]", e => {
 
 document.querySelector(".sidebar").addEventListener("click", e =>{
     if(Array.from(e.target.classList).indexOf("edit-repo-info") != -1 ){
+        if(!inview_repo.student.details)
         Object.keys(inview_repo.repo.student).forEach( prop => {
             document.querySelector(`[name=${prop}]`).value = inview_repo.repo.student[prop]
         })
