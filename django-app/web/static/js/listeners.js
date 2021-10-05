@@ -46,6 +46,14 @@ $("#tree").on("click", "summary[class=selected]", e => {
 })
 
 
+document.querySelector(".sidebar").addEventListener("click", e =>{
+    if(Array.from(e.target.classList).indexOf("edit-repo-info") != -1 ){
+        Object.keys(inview_repo.repo.student).forEach( prop => {
+            document.querySelector(`[name=${prop}]`).value = inview_repo.repo.student[prop]
+        })
+    }
+})
+
 document.querySelector("#btn-code-tab").addEventListener("click", () => {
     // starts live code-server on the current repo
     if (inview_repo) requestCodeServer(inview_repo.repo.id)
