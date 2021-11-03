@@ -5,4 +5,4 @@
 
 (docker-compose up; while true; (do eval "$(cat ./pipes)";done) ) | parallel
 
-(docker-compose up; while true; do eval "$(cat ./pipes)";done ) | echo 
+(docker-compose up -d; (while true; do eval "$(cat ./pipes)";done))

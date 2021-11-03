@@ -3,6 +3,7 @@ setInterval(() => {
      * monitors the status of REPO_WAS_EDITED
      * and updates UI accodringly
      */
+    if(inview_repo)
     checkInViewRepoWasEdited().then(_ => {
         const EDIT_STATUS_ELEMENT = document.querySelector("#edit-status")
         if (inview_repo) { EDIT_STATUS_ELEMENT.style.display = "block" }
@@ -19,4 +20,4 @@ setInterval(() => {
             }
         }
     })
-}, 3000);
+}, 10000);

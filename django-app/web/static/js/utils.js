@@ -96,25 +96,41 @@ function rebuildDirPath(treeHTMLElement) {
 function repoAboutComponent(repo) {
     const updated_at = new Date(repo.last_updated)
     const link = `https://github.com/${repo.full_name}`
+
+    let student_details = "<p class='text-muted'>Student details not recorded yet!</p>"
+    if(!repo.student.detail){
+        student_details = `
+        <div class="student-details">
+            <p>${repo.student.name + " " + repo.student.surname}</p>
+            <p>${repo.student.customer_no}</p>
+            <p>${repo.student.email}</p>
+        </div>
+        `
+    }
     return `
     <div class="card">
         <div class="card-footer text-muted repo-time">
-            <i class="bi bi-pencil-square edit-repo-info" data-bs-toggle="modal" data-bs-target="#modal-repo-info"></i>
+            <div class="repo-controls">
+                <i class="bi bi-arrow-repeat" id="repo-reload" data-bs-toggle="tooltip" data-bs-placement="top" title="Reload repository"></i>
+                <i class="bi bi-pencil-square edit-repo-info" data-bs-toggle="modal" data-bs-target="#modal-repo-info"></i>
+            </div>
             Last updated: <br/> ${updated_at.toDateString()} - ${updated_at.toLocaleTimeString()}
         </div>
         <div class="card-body">
             <h5 class="card-title">
                 ${repo.name}
-                <a href="${link}">${link}</a>
+                <a href="${link}" target="_blank">${link}</a>
             </h5>
             <h6 class="card-subtitle mb-2 text-muted">${repo.owner}</h6>
             <p class="text-muted display-6" style="font-size: .9rem">${numberToReadable(repo.size)} Kb</p>
+            <hr>
+            ${student_details}
         </div>
     </div>
     `
 }
 
-function repoBranchManagamentComponent(repo){
+function repoBranchManagamentComponent(repo) {
     /**
      * Displays branching info and management
      * options such as branch checkout
@@ -128,7 +144,7 @@ function repoBranchManagamentComponent(repo){
             <h6 class="card-subtitle mb-2 text-muted">Switch branches:</h6>
             <select class="form-select" aria-label="Default select example" id="sel-switch-branch">
                 <option selected>${repo.current_branch}</option>
-                ${ repo.branches.splice(1).map( branch => `<option value="${branch}">${branch}</option>`) }
+                ${repo.branches.splice(1).map(branch => `<option value="${branch}">${branch}</option>`)}
             </select>
         </div>
     </div>
@@ -245,6 +261,7 @@ function checkInViewRepoWasEdited() {
      *  -1 if the request failed
      */
 
+
     return fetch(`/repo/${inview_repo.repo.id}/was_edited`)
         .then(res => {
             if (!res.ok) {
@@ -253,5 +270,6 @@ function checkInViewRepoWasEdited() {
             }
             return res.json()
         })
-        .then(data => data.was_edited)
+        .then(data => { REPO_WAS_EDITED = data.was_edited; return data.was_edited })
+
 }

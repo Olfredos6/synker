@@ -50,7 +50,7 @@ class Repo(models.Model):
         '''
             Simplifies creating Repo objects using GitHub's repository payload
         '''
-        print(kwargs)
+        # print(kwargs)
         new_repo = Repo()
         new_repo.type = type
         new_repo.node_id = kwargs.get('node_id')
@@ -103,6 +103,13 @@ class Repo(models.Model):
         Repo.objects.filter(node_id=self.node_id).update(student=student)
         return Repo.objects.get(node_id=self.node_id)
 
+    # # OVERRIDDEN
+    # def delete(self, *args, **kwargs):
+    #     '''
+    #         Deleting a repository necessitates removing its folder as well.
+    #     '''
+
+
     ## GIT TIGHT Methods
     def run_cmd(self, cmd: list)-> str:
         '''
@@ -129,7 +136,7 @@ class Repo(models.Model):
             @TODO ensure we can monitor weither this operation was
             successfull or not. Perhaps a git pull flag?
         '''
-        print(self.run_cmd((['git', 'pull'])))
+        print(self.run_cmd((['git', 'pull', '--allow-unrelated-histories'])))
 
     @property
     def branches(self):
@@ -163,7 +170,6 @@ class Repo(models.Model):
         '''
         # st_proc = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, cwd=self.path)
         r = self.run_cmd(['git', 'status', '--porcelain'])
-        print(r)
         if r == "":
             return False
         else:

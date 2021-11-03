@@ -5,6 +5,10 @@ const BTN_TAB_RENDERER = document.querySelector("#btn-renderer-tab")
 const BTN_TAB_CODE = document.querySelector("#btn-code-tab")
 const source_code_viewer = document.querySelector("#source-code")
 const NODE_ID_DISPLAY = document.querySelector("#repo-node-display")
+const APACHE_URL_LINK = document.querySelector("#apache-url")
+let APACHE_URL = undefined
+const FRM_EDIT_ST_DETAILS = document.querySelector("[name=frm-edit-repo-st-info]")
+
 let inview_repo = undefined
 const DEFAULT_SERVER = "http://142.93.35.195"
 const PHP_SERVER = `${DEFAULT_SERVER}:3001`
@@ -13,7 +17,7 @@ const CSRF_TOKEN = undefined
 
 function showSearchResults(results) {
     let html = ""
-    if (results.length == 0 ) { html = "<p>No repository found.</p>" }
+    if (results.length == 0) { html = "<p>No repository found.</p>" }
     else {
         results.forEach(repo => {
             html += `<li class="list-group-item repo-list-item" data-id="${repo.id}" data-bs-toggle="tooltip" data-bs-placement="right" title="${repo.full_name}">${repo.full_name.length < 20 ? repo.full_name : repo.full_name.substr(0, 20) + "..."}</li>`
@@ -22,10 +26,10 @@ function showSearchResults(results) {
     document.querySelector("#search-result").innerHTML = html
 }
 
-function displayRepo(repo_data){
+function displayRepo(repo_data) {
     // top, display repo name, user, and last updated time
     inview_repo = repo_data
-        
+
     NODE_ID_DISPLAY.innerText = inview_repo.repo.id
     document.querySelector("#repo-about").innerHTML = repoAboutComponent(inview_repo.repo) + repoBranchManagamentComponent(inview_repo.repo)
     document.getElementById('tree').innerHTML = ""
@@ -33,11 +37,13 @@ function displayRepo(repo_data){
     tree.json(structPrepareTreeJS(inview_repo.struct))
 
     // for apps that live in the main dir
-    render(`${PHP_SERVER}/${inview_repo.repo.id}`)
+    APACHE_URL=`${PHP_SERVER}/${inview_repo.repo.id}`
+    render(APACHE_URL)
 
-    
+    APACHE_URL_LINK.href=APACHE_URL
+
     checkInViewRepoWasEdited()
-    .then(status => REPO_WAS_EDITED = status)
+        .then(status => REPO_WAS_EDITED = status)
 }
 
 function displayRepoTree(struct) {
@@ -47,14 +53,25 @@ function displayRepoTree(struct) {
     tree.json(structPrepareTreeJS(struct))
 }
 
-function render(URL, refresh=false) {
-    if(!refresh){
+function render(URL, refresh = false) {
+    if (!refresh) {
         killCodeServerView()
         BTN_TAB_RENDERER.click()
         BTN_TAB_CODE.classList.remove("disabled")
-        if (inview_repo) runPreRenderUtilities(inview_repo.repo.id)
-        if(renderer.src !== URL) // we only update if the URL changes. preventing unecessary reloads
+
+
+        if (inview_repo) {
+            runPreRenderUtilities(inview_repo.repo.id)
+            APACHE_URL_LINK.style.display="block"
+            APACHE_URL_LINK.href=URL
+        }else {
+            APACHE_URL_LINK.style.display="none"
+            APACHE_URL_LINK.href=""
+        }
+        
+        if (renderer.src !== URL) {// we only update if the URL changes. preventing unecessary reloads
             renderer.src = URL
+        }
     }
     else {
         renderer.src = URL
@@ -65,15 +82,16 @@ function showSourceCode(port) {
     BTN_TAB_CODE.innerText = "Browsing code for " + inview_repo.repo.folder
     const URL = `${DEFAULT_SERVER}:${port}?folder=/${inview_repo.repo.folder}`
     // if (URL != source_code_viewer.src)
-    if(source_code_viewer.src.indexOf(`:${port}`) == -1)
-        poolStatus(async () => { 
-            return await $.ajax({ 
-                url: URL, 
-                error: (e) => { console.log(e); return false}, 
-                success: () => true }) 
-            }, () => { 
-                source_code_viewer.src = URL 
-            }, 5)
+    if (source_code_viewer.src.indexOf(`:${port}`) == -1)
+        poolStatus(async () => {
+            return await $.ajax({
+                url: URL,
+                success: () => true,
+                error: (e) => { console.log(e); return false }
+            })
+        }, () => {
+            source_code_viewer.src = URL
+        }, 5)
 }
 
 function killCodeServerView() {
@@ -83,7 +101,7 @@ function killCodeServerView() {
     BTN_TAB_RENDERER.click()
 }
 
-function createOrUpdateRepoStudentInfo(data){
+function createOrUpdateRepoStudentInfo(data) {
     return fetch(`/repo/${inview_repo.repo.id}/student`, {
         method: "POST",
         body: JSON.stringify(data),
@@ -93,16 +111,16 @@ function createOrUpdateRepoStudentInfo(data){
             "Accept": "application/json"
         }
     })
-    .then(res => {
-        if(!res.ok){
-            notify("Failed to create or update repo's student info: " + res.statusText)
-            return null
-        }
-        return res.json()
-    })
+        .then(res => {
+            if (!res.ok) {
+                notify("Failed to create or update repo's student info: " + res.statusText)
+                return null
+            }
+            return res.json()
+        })
 }
 
-function repoCheckoutBranch(repo_id, branch){
+function repoCheckoutBranch(repo_id, branch) {
     // using query string because branch names can be tricky to handle
     return fetch(`/repo/${repo_id}/branches/checkout?b=${branch}`)
 }

@@ -22,12 +22,22 @@ document.querySelector(".btn-refresh-iframe").addEventListener('click', (e) => {
 $("body").on("click", ".repo-list-item", (e) => {
     /**
      * Triggered when a repo item is clicked from the repo search result
-     * Get and displays repo data, structure
+     * Get and displays repo data, structure, etc..
      */
     resultListElement.innerHTML = ""
     document.getElementById('tree').innerHTML = spinnerComponent()
     getRepository(e.target.dataset.id).then(data => { displayRepo(data) })
 })
+
+
+document.querySelector("#repo-about").addEventListener("click", (e)=> {
+    if(e.target.id=="repo-reload") {
+        resultListElement.innerHTML = ""
+        document.getElementById('tree').innerHTML = spinnerComponent()
+        getRepository(inview_repo.repo.id).then(data => { displayRepo(data) })
+    }
+})
+
 
 document.querySelector("#txt-search").addEventListener('click', () => {
     // check if the repo in view was edited and notify before leaving
@@ -48,7 +58,8 @@ $("#tree").on("click", "summary[class=selected]", e => {
 
 document.querySelector(".sidebar").addEventListener("click", e =>{
     if(Array.from(e.target.classList).indexOf("edit-repo-info") != -1 ){
-        if(!inview_repo.student.details)
+        FRM_EDIT_ST_DETAILS.reset()
+        if(!inview_repo.repo.student.detail)
         Object.keys(inview_repo.repo.student).forEach( prop => {
             document.querySelector(`[name=${prop}]`).value = inview_repo.repo.student[prop]
         })
@@ -90,9 +101,10 @@ document.querySelector(".btn-submit-repo-edit").addEventListener('click', () => 
     const formData = formToJSON("frm-edit-repo-st-info")
     createOrUpdateRepoStudentInfo(formData)
         .then(data => {
-            if (!data) { /* Not sure what to do for now */ }
+            if (!data) { alert("Student details edit failed!")}
             else {
-
+                displayRepo(data)
+                document.querySelector(".btn-close-edit-modal").click()
             }
         })
 })

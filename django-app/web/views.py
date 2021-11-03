@@ -42,9 +42,7 @@ def student_info(request, node_id):
             print("Existing student --->", student, repo.student, "\nUpdating using", data)
             Student.objects.filter(customer_no=repo.student.customer_no).update(**data)
         
-        return JsonResponse(repoSerialize(get_object_or_404(Repo, node_id=node_id)))
-    else:
-        return JsonResponse(data=serializeStudent(repo.student), safe=False)
+    return JsonResponse(get_json_parsable_repo_data(node_id), safe=False)
 
 
 def stats(request):

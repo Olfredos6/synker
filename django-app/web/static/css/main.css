@@ -65,22 +65,31 @@ iframe {
 
 .edit-notif > * {    
     display: none;
+    margin-bottom: -2.5rem;
 }
 
-.edit-repo-info {
+.repo-controls {
+    position: absolute;
     position: absolute;
     top: 0;
     right: .19rem;
+}
+
+.repo-controls>.bi {
     font-size: large;
     color: #1f59db;
     cursor: pointer;
 }
 
-.edit-repo-info:hover {
+.repo-controls>.bi:hover {
     color: #18d7b4;
 }
 
 .bottom-feeder {
     position: absolute;
     font-size: 0.6rem;
+}
+
+.student-details p {
+    margin-bottom: 0rem;
 }

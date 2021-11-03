@@ -24,7 +24,7 @@
       <div class="container-fluid">
         <form class="d-flex col-2">
           <input class="form-control me-2" type="search" placeholder="search repository..." aria-label="Search"
-            id="txt-search">
+            id="txt-search" autocomplete="off">
           <ul class="list-group col-2 card" id="search-result">
           </ul>
         </form>
@@ -61,6 +61,7 @@
           </li>
           <div class="nav-item float-end edit-notif">
             <p id="edit-status"> repo was edited </p>
+            <a id="apache-url" target="_blank">Browse folder via Apache</a>
           </div>
         </ul>
         <div class="tab-content" id="nav-tab-content">
@@ -83,7 +84,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form name="frm-edit-repo-st-info">{% csrf_token %}
+          <form name="frm-edit-repo-st-info" autocomplete="off">{% csrf_token %}
             <div class="mb-3">
               <label for="customer_no" class="form-label">Customer No.</label>
               <input type="text" class="form-control" name="customer_no">
@@ -103,7 +104,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary btn-close-edit-modal" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary btn-submit-repo-edit">Save changes</button>
         </div>
       </div>
