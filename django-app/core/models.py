@@ -307,6 +307,14 @@ class Repo(models.Model):
         kill_code_server_instance(self.folder_name)
         CodeServerPort.objects.get(container=self.folder_name).delete()
 
+    def update_remote_token_access(self):
+        ''' 
+            Helper method to update the token access as specified on the remote URL
+            if it is ever updated from the configuration files.
+        '''
+        return self.run_cmd(["git", "remote", "set-url", "origin", self.clone_url.replace("https://", f"https://{settings.API_KEY}@" )])
+
+
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances
