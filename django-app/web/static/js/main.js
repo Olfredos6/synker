@@ -10,7 +10,7 @@ let APACHE_URL = undefined
 const FRM_EDIT_ST_DETAILS = document.querySelector("[name=frm-edit-repo-st-info]")
 
 let inview_repo = undefined
-const DEFAULT_SERVER = "http://142.93.35.195"
+const DEFAULT_SERVER = "//142.93.35.195"
 const PHP_SERVER = `${DEFAULT_SERVER}:3001`
 let REPO_WAS_EDITED = 0
 const CSRF_TOKEN = undefined

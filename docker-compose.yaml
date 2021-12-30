@@ -11,7 +11,11 @@ services:
   
     volumes:
       - "./synker.conf:/etc/nginx/conf.d/default.conf"
-      - "./statics:/usr/share/nginx/html"
+      - "./statics:/usr/share/nginx/html/static"
+      # - "/etc/nginx/snippets/:/etc/nginx/snippets/"
+      # - "/etc/ssl/private:/etc/ssl/private"
+      # - "/etc/ssl/certs/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt"
+      # - "/etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem"
 
   django:
     depends_on:

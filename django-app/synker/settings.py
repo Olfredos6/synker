@@ -118,11 +118,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = 'http://142.93.35.195:2999/' #'/static/'
+STATIC_URL = '/static/' #'/static/'
 STATIC_ROOT = Path(BASE_DIR).parent.joinpath("statics")
 
 # Default primary key field type
@@ -185,4 +187,5 @@ print(f"""
     SYNKER REPOS DIR: {SYNKER_REPO_DIR}
     GITHUB Per page: {GITHUB_PER_PAGE}
     TEMP FOLDER: {TEMP_FOLDER}
+    GITHUB HEADERS: {REQUEST_HEADERS}
     """)
