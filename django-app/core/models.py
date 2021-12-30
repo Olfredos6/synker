@@ -92,8 +92,10 @@ class Repo(models.Model):
             requiring an update is the updated_at timestamp. 
             This info is updated everytime the repo is pulled.
         '''
+        print("Received size ---->", self.full_name, payload.get('size'))
         return Repo.objects.filter(node_id=self.node_id).update(
-            updated_at=payload.get('updated_at')
+            # updated_at=payload.get('updated_at')
+            **payload
         )
 
     def set_student(self, student: Student):
@@ -181,7 +183,7 @@ class Repo(models.Model):
         '''
         print(self.run_cmd(["git", "reset", "--hard"]))
 
-    def sync(self, timestamp:datetime = None)-> None:
+    def sync(self, timestamp:datetime = None, size=None)-> None:
         '''
         Syncs a repository. 
         Starts by checking if the repos folder contains a repo that matches this repo's GitHub node_id
@@ -230,7 +232,7 @@ class Repo(models.Model):
                     self.reset()
 
                 self.pull()
-                self.update_db(updated_at=timestamp)
+                self.update_db(updated_at=timestamp, size=size)
                 feedback = 1
         
         return feedback

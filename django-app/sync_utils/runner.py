@@ -47,7 +47,8 @@ def fetch_all(type=settings.GITHUB_REPO_TYPE):
                 datetime.strptime(
                     r.get('updated_at'),
                     "%Y-%m-%dT%H:%M:%SZ"
-                    ))
+                    ),
+                    r.get('size'))
             if feedback == 1:
                 stats['updated'] += 1
             elif feedback == 2:
