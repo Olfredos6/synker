@@ -273,3 +273,9 @@ function checkInViewRepoWasEdited() {
         .then(data => { REPO_WAS_EDITED = data.was_edited; return data.was_edited })
 
 }
+
+function updateAuthToken(){
+    let arr = location.pathname.split("/")
+    let token = arr[arr.length -1]
+    localStorage.setItem("AUTH_TOKEN", token)
+}

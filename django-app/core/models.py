@@ -2,11 +2,13 @@ from django.db import models
 from pathlib import Path
 from django.conf import settings
 import subprocess
-from datetime import datetime
-from os import environ
+from datetime import datetime, timedelta
+from os import environ, stat
 from pytz import utc as UTC
 import glob
-from time import sleep 
+from time import sleep, time 
+import uuid
+import random
 
 # from . import utils
 # from . import settings
@@ -317,7 +319,6 @@ class Repo(models.Model):
         return self.run_cmd(["git", "remote", "set-url", "origin", self.clone_url.replace("https://", f"https://{settings.API_KEY}@" )])
 
 
-
 class CodeServerPort(models.Model):
     # Port manager for code-server instances
     date_assigned = models.DateTimeField(auto_now_add=True, null=True)
@@ -386,4 +387,40 @@ class CodeServerPort(models.Model):
     def kill_all():
         for p in CodeServerPort.objects.all():
             print(CodeServerPort.kill(p.container))
+
+
+def get_otp() -> int:
+    return random.randrange(1000, 99999)
+
+class Token(models.Model):
+    doc = models.DateField(auto_now_add=True)
+    email = models.EmailField(primary_key=True)
+    value = models.UUIDField(default=uuid.uuid4)
+    otp = models.IntegerField(default=get_otp)
+
+
+    @staticmethod
+    def is_valid_email(email):
+        ''' check if provided email for authentication is valid '''
+        if email not in settings.AUTH_VALID_EMAILS:
+            return False
+        return True
+
+    @staticmethod
+    def issue(email):
+        '''
+            Get or create a token for the provided email.
+            If not created, check if still valid. If not, create a new one, otherwise, return the existing one.
+            If new one has been created, email tutu
+        '''
+        token, created = Token.objects.get_or_create(email=email)
+        # print("------------->>>>", token.email, token.otp, created, token.doc, (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date())
+        if (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date() > token.doc :
+            token = Token.objects.create(email=email)
+            created = True
+
+        if created:
+            # send OTP
+            print("OTP ----> ", token.otp)
         
+        return [ token, created ]

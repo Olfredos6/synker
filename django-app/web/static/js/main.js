@@ -125,4 +125,6 @@ function repoCheckoutBranch(repo_id, branch) {
     return fetch(`/repo/${repo_id}/branches/checkout?b=${branch}`)
 }
 
+updateAuthToken()
 render("/stats")
+

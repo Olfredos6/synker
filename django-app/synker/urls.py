@@ -20,7 +20,10 @@ from web import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('', views.index, name="home"  ),
+    path('', views.index, name="index"  ),
+    path('home/<slug:token>', views.landing, name="landing"  ),
+    path('auth/', views.auth, name="auth"),
+    path('confirm-otp/', views.confirm_otp, name="confirm-otp"),
     path('search/', views.search_repo, name="search-repo"),
     path('repo/<str:id>', views.repo, name="view-repo"),
     path('repo/<str:node_id>/student', views.student_info, name="repo-student"),

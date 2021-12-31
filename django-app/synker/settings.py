@@ -185,6 +185,9 @@ TEMP_FOLDER = Path(BASE_DIR).joinpath("temp")
 if not TEMP_FOLDER.exists():
     TEMP_FOLDER.mkdir()
 
+AUTH_TOKEN_LIFETIME = int(environ.get("AUTH_TOKEN_LIFETIME"))
+AUTH_VALID_EMAILS = [ email + "@itcareerswitch.co.uk" for email in environ.get("AUTH_VALID_EMAILS", "").split(",")  ]
+
 print(f"""
     STATIC ROOT: {STATIC_ROOT}
     SYNKER REPOS DIR: {SYNKER_REPO_DIR}
@@ -192,4 +195,6 @@ print(f"""
     TEMP FOLDER: {TEMP_FOLDER}
     GITHUB HEADERS: {REQUEST_HEADERS}
     GITHUB TYPE OF REPO SYNCED: {GITHUB_REPO_TYPE}
+    AUTH TOKEN LIFETIME: {AUTH_TOKEN_LIFETIME}
+    AUTH_VALID_EMAILS: {AUTH_VALID_EMAILS}
     """)

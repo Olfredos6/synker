@@ -1,13 +1,55 @@
-from django.shortcuts import render, get_object_or_404
+from json.encoder import JSONEncoder
+from django.db.models.fields import DateField
+from django.http.response import HttpResponseBadRequest
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
-from core.models import Repo, Student
+from core.models import Repo, Student, Token
 from django.db.models import Q
 from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
 import json
 
 
-def index(request):
-    return render(request, 'index.html', {})
+
+
+
+def index(request):    
+    ''' Init page, collects token and redirects to index or prompts for authentication '''
+    return render(request, 'landing.html', {})
+
+
+def landing(request, token):
+    print("----landing with token ---->", token)
+    # print("Params -----> ", request.GET.items())
+    # token = request.GET.get('token')
+    # if token:
+    #     try:
+    #         if not Token.objects.filter(value=token).exists():
+    #             return render(request, 'index.html', {})
+    #         else:
+    #             return redirect('/?token=INVALID')
+    #     except Exception as e:
+    #         return redirect('/?token=INVALID')
+    if Token.objects.filter(value=token).exists():
+        return render(request, 'index.html', {})
+    return redirect('index')
+
+
+def auth(request):
+    # print(request.body.decode("utf-8"))
+    email = json.loads(request.body.decode("utf-8")).get("email", None)
+    if Token.is_valid_email(email):
+        # create new token
+        token, created = Token.issue(email=email)
+        return JsonResponse({"message": "OTP required" }, safe=False)
+    return JsonResponse({"message": "Invalid email"}, safe=False)
+
+
+def confirm_otp(request):
+    otp = json.loads(request.body.decode("utf-8")).get("otp", None)
+    token_qs = Token.objects.filter(otp=otp)
+    if token_qs.exists():
+        return JsonResponse({"token": token_qs[0].value}, safe=False)
+    return JsonResponse({"error": "Invalid OTP"}, safe=False)
 
 
 def search_repo(request):
