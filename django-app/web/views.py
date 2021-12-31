@@ -29,8 +29,10 @@ def landing(request, token):
     #             return redirect('/?token=INVALID')
     #     except Exception as e:
     #         return redirect('/?token=INVALID')
-    if Token.objects.filter(value=token).exists():
-        return render(request, 'index.html', {})
+    token_qs = Token.objects.filter(value=token)
+    if token_qs.exists():
+        if not token_qs[0].has_expired:
+            return render(request, 'index.html', {})
     return redirect('index')
 
 

@@ -405,6 +405,12 @@ class Token(models.Model):
         if email not in settings.AUTH_VALID_EMAILS:
             return False
         return True
+    
+    @property
+    def has_expired(self):
+        if (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date() > self.doc:
+            return True
+        return False
 
     @staticmethod
     def issue(email):
@@ -414,8 +420,10 @@ class Token(models.Model):
             If new one has been created, email tutu
         '''
         token, created = Token.objects.get_or_create(email=email)
-        # print("------------->>>>", token.email, token.otp, created, token.doc, (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date())
-        if (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date() > token.doc :
+        print("-------TOKEN HAS EXPIRED??? ------>>>>", token.has_expired )
+        if token.has_expired:
+            print("Expired token, generating new one...")
+            token.delete()
             token = Token.objects.create(email=email)
             created = True
 
