@@ -6,7 +6,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"/>
+  <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}" />
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -77,8 +77,15 @@
             frameborder="0"></iframe>
           <div id="k-base">
             <h1>K-Base for ITCS Coding Tutors</h1>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Search K-Base</label>
+              <input type="text" class="form-control" id="k-base-search-key"
+                placeholder="search a title, a tag, a text...">
+              <button type="button" class="btn btn-warning mt-1" data-bs-toggle="modal"
+                data-bs-target="#k-base-form">Add</button>
+            </div>
             <div id="k-base-main">
-              
+
             </div>
           </div>
         </div>
@@ -117,6 +124,38 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-close-edit-modal" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary btn-submit-repo-edit">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" tabindex="-1" id="k-base-form">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Knowledge form</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form name="k-base-frm">
+            <input type="number" class="form-control" name="id" hidden>
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" name="title" placeholder="Title...">
+            </div>
+            <div class="mb-3">
+              <label for="text" class="form-label">Message</label>
+              <textarea class="form-control" name="text" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="tags" class="form-label">Tags</label>
+              <input type="text" class="form-control" name="tags" placeholder="Separate tags with commas">
+            </div>
+        </div>
+        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="k-base-form-btn-submit">Save</button>
         </div>
       </div>
     </div>

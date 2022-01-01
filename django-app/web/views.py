@@ -196,7 +196,7 @@ def list_knwoledges(request, token):
                 Q( text__icontains = search_term )
             )
         else:
-            k_list = Know.objects.all().order_by('click_count')[:25]
+            k_list = Know.objects.all().order_by('click_count', '-doc')[:25]
         
         return JsonResponse(json.loads(serialize('json', k_list)), safe=False)
     return HttpResponseForbidden()

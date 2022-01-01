@@ -125,3 +125,23 @@ document.querySelector(".sidebar").addEventListener("change", (e) => {
             })
     }
 })
+
+
+document.querySelector("#k-base-form-btn-submit").addEventListener("click", ()=>{
+    let formData = formToJSON("k-base-frm")
+    if(!formData.id){
+        delete formData.id
+    }
+    fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    .then( res => {
+        if(res.ok){ loadKBases()}
+        else{ notify(res.responseText) }
+    })
+})
