@@ -14,6 +14,7 @@ const DEFAULT_SERVER = "http://142.93.35.195"
 const PHP_SERVER = `${DEFAULT_SERVER}:3001`
 let REPO_WAS_EDITED = 0
 const CSRF_TOKEN = undefined
+let listed_k_bases = []
 
 function showSearchResults(results) {
     let html = ""
@@ -128,6 +129,7 @@ function repoCheckoutBranch(repo_id, branch) {
 function loadKBases(search=null){
     getKBases(search)
     .then(bases => {
+        listed_k_bases = bases
         let html = ""
         bases.forEach(base => {
             base_id = base.pk
@@ -142,6 +144,10 @@ function loadKBases(search=null){
                 <div id="base-${base_id}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                     ${ base.text }
+                    <div class="row">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#k-base-form" data-base="${base_id}" id="k-base-edit">Edit</button>
+                    </div>
                 </div>
                 </div>
             </div>`

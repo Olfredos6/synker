@@ -153,6 +153,6 @@ document.querySelector("#k-base-search-key").addEventListener("input", e => {
 })
 
 document.querySelector("#k-base-main").addEventListener("click", e =>{
-    if(e.target.matches(".accordion-button"))
-    incrementBaseViewCount( e.target.dataset.base )
+    if(e.target.matches(".accordion-button")) incrementBaseViewCount( e.target.dataset.base )
+    if(e.target.matches("#k-base-edit")) fillKBaseFormWith(listed_k_bases.find( base => base.pk == e.target.dataset.base ))
 })
