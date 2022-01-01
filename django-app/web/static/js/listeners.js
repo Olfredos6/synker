@@ -5,8 +5,8 @@ document.querySelector("#txt-search").addEventListener("input", (e) => {
 
     if (keyword !== "") {
 
-        if(keyword.length > 3) {
-            resultListElement.innerHTML = spinnerComponent("searching...")    
+        if (keyword.length > 3) {
+            resultListElement.innerHTML = spinnerComponent("searching...")
             searchRepo(e.target.value).then(results => showSearchResults(results))
         }
     } else {
@@ -30,8 +30,8 @@ $("body").on("click", ".repo-list-item", (e) => {
 })
 
 
-document.querySelector("#repo-about").addEventListener("click", (e)=> {
-    if(e.target.id=="repo-reload") {
+document.querySelector("#repo-about").addEventListener("click", (e) => {
+    if (e.target.id == "repo-reload") {
         resultListElement.innerHTML = ""
         document.getElementById('tree').innerHTML = spinnerComponent()
         getRepository(inview_repo.repo.id).then(data => { displayRepo(data) })
@@ -56,13 +56,13 @@ $("#tree").on("click", "summary[class=selected]", e => {
 })
 
 
-document.querySelector(".sidebar").addEventListener("click", e =>{
-    if(Array.from(e.target.classList).indexOf("edit-repo-info") != -1 ){
+document.querySelector(".sidebar").addEventListener("click", e => {
+    if (Array.from(e.target.classList).indexOf("edit-repo-info") != -1) {
         FRM_EDIT_ST_DETAILS.reset()
-        if(!inview_repo.repo.student.detail)
-        Object.keys(inview_repo.repo.student).forEach( prop => {
-            document.querySelector(`[name=${prop}]`).value = inview_repo.repo.student[prop]
-        })
+        if (!inview_repo.repo.student.detail)
+            Object.keys(inview_repo.repo.student).forEach(prop => {
+                document.querySelector(`[name=${prop}]`).value = inview_repo.repo.student[prop]
+            })
     }
 })
 
@@ -101,7 +101,7 @@ document.querySelector(".btn-submit-repo-edit").addEventListener('click', () => 
     const formData = formToJSON("frm-edit-repo-st-info")
     createOrUpdateRepoStudentInfo(formData)
         .then(data => {
-            if (!data) { alert("Student details edit failed!")}
+            if (!data) { alert("Student details edit failed!") }
             else {
                 displayRepo(data)
                 document.querySelector(".btn-close-edit-modal").click()
@@ -127,9 +127,9 @@ document.querySelector(".sidebar").addEventListener("change", (e) => {
 })
 
 
-document.querySelector("#k-base-frm-btn-submit").addEventListener("click", ()=>{
+document.querySelector("#k-base-frm-btn-submit").addEventListener("click", () => {
     let formData = formToJSON("k-base-frm")
-    if(!formData.id){
+    if (!formData.id) {
         delete formData.id
     }
     fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}`, {
@@ -140,8 +140,14 @@ document.querySelector("#k-base-frm-btn-submit").addEventListener("click", ()=>{
             "Content-Type": "application/json"
         }
     })
-    .then( res => {
-        if(res.ok){ loadKBases(); document.querySelector("[name='k-base-frm']").reset(), document.querySelector("#k-base-frm-btn-close").click()}
-        else{ notify(res.responseText) }
-    })
+        .then(res => {
+            if (res.ok) { loadKBases(); document.querySelector("[name='k-base-frm']").reset(), document.querySelector("#k-base-frm-btn-close").click() }
+            else { notify(res.responseText) }
+        })
+})
+
+document.querySelector("#k-base-search-key").addEventListener("input", e => {
+    if (e.target.value.length > 3) {
+        loadKBases(e.target.value);
+    }
 })
