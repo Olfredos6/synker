@@ -155,7 +155,7 @@ function loadKBases(search=null){
 
         document.querySelector("#k-base-main").innerHTML = `
         <div class="accordion" id="accordionExample">
-            ${ search ? "seach result for <strong>" + search + "</strong>" : "Most populars knowledges" }
+            ${ search ? "seach result for <strong>" + search + '</strong> <button type="button" class="btn btn-outline-dark btn-sm mb-1 btn-clear-k-search">clear search</button>' : "Most populars knowledges" }
             ${html}
         </div>
         `
