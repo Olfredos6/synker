@@ -1,15 +1,30 @@
 from json.encoder import JSONEncoder
 from django.db.models.fields import DateField
-from django.http.response import HttpResponseBadRequest
+from django.http.response import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
-from core.models import Repo, Student, Token
+from core.models import Repo, Student, Token, Know, KnowTag
 from django.db.models import Q
 from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
 import json
+from django.core.serializers import serialize
+from django.views.decorators.csrf import csrf_exempt
 
 
+def req_body_to_json(request):
+    return json.loads(request.body.decode("utf-8"))
 
+def is_authed(token):
+    ''' Used to auth requests passing it a token slug from in their
+        path. If the token is invalid or expired, drop the request by
+        returning a 403
+    '''
+    token_qs = Token.objects.filter(value=token)
+    if token_qs.exists():
+        if not token_qs[0].has_expired:
+            return True
+
+    return False
 
 
 def index(request):    
@@ -18,17 +33,6 @@ def index(request):
 
 
 def landing(request, token):
-    print("----landing with token ---->", token)
-    # print("Params -----> ", request.GET.items())
-    # token = request.GET.get('token')
-    # if token:
-    #     try:
-    #         if not Token.objects.filter(value=token).exists():
-    #             return render(request, 'index.html', {})
-    #         else:
-    #             return redirect('/?token=INVALID')
-    #     except Exception as e:
-    #         return redirect('/?token=INVALID')
     token_qs = Token.objects.filter(value=token)
     if token_qs.exists():
         if not token_qs[0].has_expired:
@@ -151,3 +155,48 @@ def repo_checkout_branch(request, id):
     repo = get_object_or_404(Repo, node_id=id)
     repo.checkout(request.GET.get("b"))
     return JsonResponse(get_json_parsable_repo_data(id), safe=False)
+
+
+@csrf_exempt
+def list_knwoledges(request, token):
+    if is_authed(token):
+        if request.method == "POST":
+            token = Token.get(token)
+            print(token, req_body_to_json(request))
+            payload = req_body_to_json(request)
+
+            # to edit a know, insert its primary key value in the payload
+            if payload.get('id', None):
+                print(Know.objects.filter(id=payload.get("id")).update(                    
+                    last_edited_by=token.email,
+                    title=payload.get('title'),
+                    tags=payload.get('tags'),
+                    text=payload.get('text'),
+                    ))
+                new_know = Know.objects.get(id=payload.get('id'))
+            else:
+                new_know = Know.objects.create(
+                    last_edited_by=token.email,
+                    title=payload.get('title'),
+                    tags=payload.get('tags'),
+                    text=payload.get('text'),
+                )
+            # submit new knowledge
+            # can update ags, title, content, click count
+            return JsonResponse(json.loads(serialize('json', [new_know])), safe=False)
+        
+        # if a GET request, we either display top clicked on or perform
+        # a search based on the received query parameter
+        k_list = []
+        search_term =  request.GET.get("search")
+        if search_term:
+            k_list = Know.objects.filter(
+                Q( title__icontains = search_term) | 
+                Q( tags__icontains = search_term) |
+                Q( text__icontains = search_term )
+            )
+        else:
+            k_list = Know.objects.all().order_by('click_count')[:25]
+        
+        return JsonResponse(json.loads(serialize('json', k_list)), safe=False)
+    return HttpResponseForbidden()

@@ -432,3 +432,23 @@ class Token(models.Model):
             print("OTP ----> ", token.otp)
         
         return [ token, created ]
+    
+
+    @staticmethod
+    def get(token):
+        '''
+            Returns the token object from a token
+        '''
+        return Token.objects.get(value=token)
+
+class KnowTag(models.Model):
+    title = models.CharField(max_length=100)
+
+class Know(models.Model):
+    doc = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now=True)
+    last_edited_by = models.EmailField(null=False)
+    title = models.CharField(max_length=100)
+    tags = models.CharField(max_length=5000)
+    text = models.TextField()
+    click_count = models.IntegerField(default=0) # counts how many time this was clicked on to read
