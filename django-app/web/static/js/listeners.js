@@ -127,7 +127,7 @@ document.querySelector(".sidebar").addEventListener("change", (e) => {
 })
 
 
-document.querySelector("#k-base-form-btn-submit").addEventListener("click", ()=>{
+document.querySelector("#k-base-frm-btn-submit").addEventListener("click", ()=>{
     let formData = formToJSON("k-base-frm")
     if(!formData.id){
         delete formData.id
@@ -141,7 +141,7 @@ document.querySelector("#k-base-form-btn-submit").addEventListener("click", ()=>
         }
     })
     .then( res => {
-        if(res.ok){ loadKBases()}
+        if(res.ok){ loadKBases(); document.querySelector("[name='k-base-frm']").reset(), document.querySelector("#k-base-frm-btn-close").click()}
         else{ notify(res.responseText) }
     })
 })
