@@ -9,6 +9,7 @@ import glob
 from time import sleep, time 
 import uuid
 import random
+from sync_utils.github import post_new_issue
 
 # from . import utils
 # from . import settings
@@ -318,6 +319,8 @@ class Repo(models.Model):
         '''
         return self.run_cmd(["git", "remote", "set-url", "origin", self.clone_url.replace("https://", f"https://{settings.API_KEY}@" )])
 
+    def create_issue(self, title, body):
+        return post_new_issue(self.owner_login, self._name, { "title": title, "body": body})
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances
@@ -392,6 +395,7 @@ class CodeServerPort(models.Model):
 def get_otp() -> int:
     return random.randrange(1000, 99999)
 
+
 class Token(models.Model):
     doc = models.DateField(auto_now_add=True)
     email = models.EmailField(primary_key=True)
@@ -441,8 +445,10 @@ class Token(models.Model):
         '''
         return Token.objects.get(value=token)
 
+
 class KnowTag(models.Model):
     title = models.CharField(max_length=100)
+
 
 class Know(models.Model):
     doc = models.DateTimeField(auto_now_add=True)

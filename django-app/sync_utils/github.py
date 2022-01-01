@@ -32,6 +32,16 @@ def GET(endpoint, return_dict=True, params={} ):
         print("!! ERROR?", r.status_code, r.reason)
         return None if return_dict else r
 
+def POST(endpoint, return_dict=True, params={} ):
+    endpoint = process_endpoint(endpoint)
+    print("sending ---> ", params)
+    r = R.post(settings.API_URL + endpoint, headers=settings.REQUEST_HEADERS, data=json.dumps(params))
+    if r.ok:
+        print(r.reason, r.content, r.headers, r.text)
+        return r.json() if return_dict else r
+    else:
+        print("!! ERROR?", r.status_code, r.reason,  r.text, r.content)
+        return None if return_dict else r
 
 def get_current_user_info():
     return GET("/user", False)
@@ -45,3 +55,7 @@ def collect_repos(type=settings.GITHUB_REPO_TYPE, page=1):
     '''
     print(f"Collecting repos of type {type}")
     return GET("/user/repos", True, {"type": type, "per_page": 100, "page": page})
+
+
+def post_new_issue(owner, repo, params):
+    return POST(f"/repos/{owner}/{repo}/issues", True, params)
