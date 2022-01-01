@@ -35,5 +35,6 @@ urlpatterns = [
     path('code-server/<str:node_id>', views.code_server, name="code-server"),
     path('kill-code-server/<str:node_id>', views.kill_code_server, name="kill-code-server"),
 
-    path('knowledge-base/<slug:token>', views.list_knwoledges, name="list-know")
+    path('knowledge-base/<slug:token>', views.list_knwoledges, name="list-know"),
+    path('knowledge-base/up-count/<slug:token>', views.up_view_count, name="up_view_count")
 ]

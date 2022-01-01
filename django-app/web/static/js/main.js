@@ -135,7 +135,7 @@ function loadKBases(search=null){
             html += `
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#base-${base_id}" aria-expanded="true" aria-controls="collapseOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-base="${base_id}" data-bs-target="#base-${base_id}" aria-expanded="true" aria-controls="collapseOne">
                     ${ base.title }
                 </button>
                 </h2>

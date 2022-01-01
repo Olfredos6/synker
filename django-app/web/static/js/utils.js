@@ -98,7 +98,7 @@ function repoAboutComponent(repo) {
     const link = `https://github.com/${repo.full_name}`
 
     let student_details = "<p class='text-muted'>Student details not recorded yet!</p>"
-    if(!repo.student.detail){
+    if (!repo.student.detail) {
         student_details = `
         <div class="student-details">
             <p>${repo.student.name + " " + repo.student.surname}</p>
@@ -274,14 +274,18 @@ function checkInViewRepoWasEdited() {
 
 }
 
-function updateAuthToken(){
+function updateAuthToken() {
     let arr = location.pathname.split("/")
-    let token = arr[arr.length -1]
+    let token = arr[arr.length - 1]
     localStorage.setItem("AUTH_TOKEN", token)
 }
 
-function getKBases(search=null){
-    return fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}${ search ? '?search=' + search : ''}`)
-    .then( res => res.json())
-    .then(data => data)
+function getKBases(search = null) {
+    return fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}${search ? '?search=' + search : ''}`)
+        .then(res => res.json())
+        .then(data => data)
+}
+
+function incrementBaseViewCount(base_id) {
+    fetch(`/knowledge-base/up-count/${localStorage.getItem("AUTH_TOKEN")}?id=${base_id}`)
 }

@@ -151,3 +151,8 @@ document.querySelector("#k-base-search-key").addEventListener("input", e => {
         loadKBases(e.target.value);
     }
 })
+
+document.querySelector("#k-base-main").addEventListener("click", e =>{
+    if(e.target.matches(".accordion-button"))
+    incrementBaseViewCount( e.target.dataset.base )
+})

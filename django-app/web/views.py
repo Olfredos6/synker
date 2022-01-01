@@ -4,7 +4,7 @@ from django.http.response import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from core.models import Repo, Student, Token, Know, KnowTag
-from django.db.models import Q
+from django.db.models import Q, F
 from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
 import json
 from django.core.serializers import serialize
@@ -196,7 +196,15 @@ def list_knwoledges(request, token):
                 Q( text__icontains = search_term )
             )
         else:
-            k_list = Know.objects.all().order_by('click_count', '-doc')[:25]
+            k_list = Know.objects.all().order_by('-click_count', '-doc')[:25]
         
         return JsonResponse(json.loads(serialize('json', k_list)), safe=False)
+    return HttpResponseForbidden()
+
+
+def up_view_count(request, token):
+    if is_authed(token):
+
+        print(Know.objects.filter(id=request.GET.get('id')).update(click_count=F('click_count') + 1))
+        return HttpResponse(status=200)
     return HttpResponseForbidden()
