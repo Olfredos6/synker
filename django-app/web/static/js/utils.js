@@ -279,3 +279,9 @@ function updateAuthToken(){
     let token = arr[arr.length -1]
     localStorage.setItem("AUTH_TOKEN", token)
 }
+
+function getKBases(search=null){
+    return fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}${ search ? '?search=' + search : ''}`)
+    .then( res => res.json())
+    .then(data => data)
+}

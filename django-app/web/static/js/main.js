@@ -125,6 +125,37 @@ function repoCheckoutBranch(repo_id, branch) {
     return fetch(`/repo/${repo_id}/branches/checkout?b=${branch}`)
 }
 
+function loadKBases(search=null){
+    getKBases(search)
+    .then(bases => {
+        let html = ""
+        bases.forEach(base => {
+            base_id = base.pk
+            base = base.fields
+            html += `
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#base-${base_id}" aria-expanded="true" aria-controls="collapseOne">
+                    ${ base.title }
+                </button>
+                </h2>
+                <div id="base-${base_id}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    ${ base.text }
+                </div>
+                </div>
+            </div>`
+        })
+
+        document.querySelector("#k-base-main").innerHTML = `
+        <div class="accordion" id="accordionExample">
+            ${ search ? "seach result for <strong>" + search + "</strong>" : "Most populars knowledges" }
+            ${html}
+        </div>
+        `
+    })
+}
+
 updateAuthToken()
 render("/stats")
-
+loadKBases()
