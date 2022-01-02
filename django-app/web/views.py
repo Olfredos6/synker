@@ -19,8 +19,7 @@ def req_body_to_json(request):
 
 def log_authed_request(request, token):
     with open("AUTHED_LOG.log", "a+") as f:
-        # {request.META.get("PATH_INFO")} - {Token.objects.get(value=token).email} - {datetime.datetime.now()}
-        f.writelines(f"{request.META.get('PATH_INFO')} - {Token.objects.get(value=token).email} - {datetime.datetime.now()}\n")
+        f.writelines(f"{request.method} {request.META.get('PATH_INFO')} - {Token.objects.get(value=token).email} - {datetime.datetime.now()}\n")
 
 
 def is_authed(request, token):
