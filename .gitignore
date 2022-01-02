@@ -4,3 +4,4 @@ repositories/
 .env
 statics/
 django-app/core/migrations/
+*.log
