@@ -59,6 +59,7 @@ def collect_repos(type=settings.GITHUB_REPO_TYPE, page=1):
 
 
 def get_issues(owner, repo):
+    print(f"/repos/{owner}/{repo}/issues")
     return GET(f"/repos/{owner}/{repo}/issues")
 
 

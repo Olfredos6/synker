@@ -323,7 +323,7 @@ class Repo(models.Model):
         return post_new_issue(self.owner_login, self._name, { "title": title, "body": body})
 
     def get_open_issues(self):
-        return get_issues(self.owner_login, self._name)
+        return get_issues(*self.full_name.split("/"))
 
 
 class CodeServerPort(models.Model):
