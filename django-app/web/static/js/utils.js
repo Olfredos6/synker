@@ -152,9 +152,9 @@ async function reviewsAndIssuesComponent() {
         html += "<option value='" + t.name + "'>" + t.name + "</option>"
     })
 
-    return `<div class="card card-reviews-issues" style="position: absolute;top: 5vh;height: 75vh; z-index: 1; width: 16%">
+    return `<div class="card card-reviews-issues" style="position: absolute;top: 5vh;height: 75vh; z-index: 1000; width: 16%">
                 <div class="card-footer">
-                    <button type="button" class="btn btn-danger btn-sm" id="btn-close-rev-n-issues">Quit</button>
+                    <button type="button" class="btn btn-danger btn-sm float-end" id="btn-close-rev-n-issues">Quit</button>
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
