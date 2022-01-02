@@ -143,7 +143,7 @@ function loadKBases(search=null){
                 </h2>
                 <div id="base-${base_id}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    ${ base.text }
+                    ${ base.text.replaceAll("\r\n", "<br/>") }
                     <div class="row">
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                         data-bs-target="#k-base-form" data-base="${base_id}" id="k-base-edit">Edit</button>
