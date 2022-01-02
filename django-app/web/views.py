@@ -9,12 +9,21 @@ from .utils import repoSerialize, compute_stats, get_json_parsable_repo_data
 import json
 from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
+import datetime
+
 
 
 def req_body_to_json(request):
     return json.loads(request.body.decode("utf-8"))
 
-def is_authed(token):
+
+def log_authed_request(request, token):
+    with open("AUTHED_LOG.log", "a+") as f:
+        # {request.META.get("PATH_INFO")} - {Token.objects.get(value=token).email} - {datetime.datetime.now()}
+        f.writelines(f"{request.META.get('PATH_INFO')} - {Token.objects.get(value=token).email} - {datetime.datetime.now()}\n")
+
+
+def is_authed(request, token):
     ''' Used to auth requests passing it a token slug from in their
         path. If the token is invalid or expired, drop the request by
         returning a 403
@@ -22,6 +31,7 @@ def is_authed(token):
     token_qs = Token.objects.filter(value=token)
     if token_qs.exists():
         if not token_qs[0].has_expired:
+            log_authed_request(request, token)
             return True
 
     return False
@@ -159,7 +169,7 @@ def repo_checkout_branch(request, id):
 
 @csrf_exempt
 def list_knwoledges(request, token):
-    if is_authed(token):
+    if is_authed(request, token):
         if request.method == "POST":
             token = Token.get(token)
             print(token, req_body_to_json(request))
@@ -203,21 +213,21 @@ def list_knwoledges(request, token):
 
 
 def up_view_count(request, token):
-    if is_authed(token):
+    if is_authed(request, token):
         Know.objects.filter(id=request.GET.get('id')).update(click_count=F('click_count') + 1)
         return HttpResponse(status=200)
     return HttpResponseForbidden()
 
 
 def list_repo_issues(request, token):
-    if is_authed(token):
+    if is_authed(request, token):
         return JsonResponse( Repo.objects.get(node_id=request.GET.get('repo')).get_open_issues(),safe=False)
     return HttpResponseForbidden()
 
 
 @csrf_exempt
 def review_issues(request, token):
-    if is_authed(token):
+    if is_authed(request, token):
         if request.method == "POST":
             body = req_body_to_json(request)
             tasks_json = []
