@@ -118,11 +118,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = 'http://142.93.35.195:2999/' #'/static/'
+STATIC_URL = '/static/' #'/static/'
 STATIC_ROOT = Path(BASE_DIR).parent.joinpath("statics")
 
 # Default primary key field type
@@ -174,15 +176,25 @@ SYNKER_REPO_DIR = Path(BASE_DIR).parent.joinpath("repositories")
 if not SYNKER_REPO_DIR.exists():
     SYNKER_REPO_DIR.mkdir()
 
+
+GITHUB_REPO_TYPE = environ.get("GITHUB_DEFAULT_REPO_TYPE")
 GITHUB_PER_PAGE = int(environ.get("GITHUB_PER_PAGE"))
+
 
 TEMP_FOLDER = Path(BASE_DIR).joinpath("temp")
 if not TEMP_FOLDER.exists():
     TEMP_FOLDER.mkdir()
+
+AUTH_TOKEN_LIFETIME = int(environ.get("AUTH_TOKEN_LIFETIME"))
+AUTH_VALID_EMAILS = [ email + "@itcareerswitch.co.uk" for email in environ.get("AUTH_VALID_EMAILS", "").split(",")  ]
 
 print(f"""
     STATIC ROOT: {STATIC_ROOT}
     SYNKER REPOS DIR: {SYNKER_REPO_DIR}
     GITHUB Per page: {GITHUB_PER_PAGE}
     TEMP FOLDER: {TEMP_FOLDER}
+    GITHUB HEADERS: {REQUEST_HEADERS}
+    GITHUB TYPE OF REPO SYNCED: {GITHUB_REPO_TYPE}
+    AUTH TOKEN LIFETIME: {AUTH_TOKEN_LIFETIME}
+    AUTH_VALID_EMAILS: {AUTH_VALID_EMAILS}
     """)

@@ -1,5 +1,6 @@
 # DO NOT FORGET TO CONFIGURE NGINX ON HOST.
 # Nginx configuration sample found inside ./synker.conf
+# while true; do eval "$(cat ./pipes)"; done
 version: "3.2"
 
 services:
@@ -10,7 +11,11 @@ services:
   
     volumes:
       - "./synker.conf:/etc/nginx/conf.d/default.conf"
-      - "./statics:/usr/share/nginx/html"
+      - "./statics:/usr/share/nginx/html/static"
+      # - "/etc/nginx/snippets/:/etc/nginx/snippets/"
+      # - "/etc/ssl/private:/etc/ssl/private"
+      # - "/etc/ssl/certs/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt"
+      # - "/etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem"
 
   django:
     depends_on:
@@ -25,14 +30,23 @@ services:
         target: "/statics"
       - type: bind # binds to a folder on host where repos are synced into. See settings.py for more.
         source: "./repositories"
-        target: "/repositories"    
+        target: "/repositories"  
+      #   # DooD
+      # - type: bind
+      #   source: "/var/run/docker.sock"
+      #   target: "/var/run/docker.sock" # this requires more investigation as it is unsercure https://blog.nestybox.com/2019/09/14/dind.html#docker-out-of-docker-dood, https://www.lvh.io/posts/dont-expose-the-docker-socket-not-even-to-a-container/
+      - "./pipes:/hostpipe"
     ports:
       - "3000:3000"
     env_file:
-      - './.env'      
+      - './.env' 
+    environment:
+      - APP_HOST_DIR=$PWD
     command: bash -c 'python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
+    # command: bash -c 'gunicorn --bind :3000 --workers 3 --reload synker.wsgi:application'
 
   background-sync:
+    restart: always
     depends_on: 
       - django
     build: ./django-app/
@@ -48,10 +62,23 @@ services:
     command: bash -c 'python manage.py shell -c "from sync_utils.runner import run; run()"'
 
   apache-php:
-    image: php:7.2-apache
+    # image: php:7.4-apache
+    build: ./apache-php
     ports:
       - "3001:80"
     volumes:
       - type: bind
         source: './repositories'
         target: '/var/www/html'
+    # volumes:
+    #   - "./php.ini:/usr/local/etc/php/conf.d/mysql.ini"
+    
+  companydir-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: tutor
+      MYSQL_PASSWORD: tutor
+      MYSQL_DATABASE: companydirectory
+    volumes:
+      - "./companydirectory.sql:/docker-entrypoint-initdb.d/cd.sql"

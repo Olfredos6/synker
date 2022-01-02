@@ -1,7 +1,7 @@
 form>#search-result {
     position: absolute;
     top: 3rem;
-    width: 17rem;
+    /* width: 17rem; */
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 50vh;
@@ -10,6 +10,14 @@ form>#search-result {
 
 .main {
     width: 100%;
+}
+
+.sidebar {
+    padding-right: unset;
+}
+
+.content {
+    margin-top: 0.5rem;
 }
 
 .sidebar>div{
@@ -25,11 +33,63 @@ form>#search-result {
     background-color: #f8f9fa;
 }
 
+.list-group>p{
+    margin: auto;
+}
+
+
 .repo-time {
     font-size: 0.8em;
 }
 
-#renderer {
+iframe {
     width: 100%;
     height: 90vh;
+}
+
+#tree {
+    overflow: auto;
+    padding-left: 0.2rem;
+}
+
+.btn-refresh-iframe {
+    padding-top: 10px;
+    margin-right: 5px;
+}
+
+.edit-notif {
+    position: absolute;
+    float: right;
+    right: 0;
+}
+
+.edit-notif > * {    
+    display: none;
+    margin-bottom: -2.5rem;
+}
+
+.repo-controls {
+    position: absolute;
+    position: absolute;
+    top: 0;
+    right: .19rem;
+}
+
+.repo-controls>.bi {
+    font-size: large;
+    color: #1f59db;
+    cursor: pointer;
+}
+
+.repo-controls>.bi:hover {
+    color: #18d7b4;
+}
+
+.bottom-feeder {
+    position: absolute;
+    font-size: 0.6rem;
+}
+
+.student-details p {
+    margin-bottom: 0rem;
 }
