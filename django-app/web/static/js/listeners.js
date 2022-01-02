@@ -36,6 +36,28 @@ document.querySelector("#repo-about").addEventListener("click", (e) => {
         document.getElementById('tree').innerHTML = spinnerComponent()
         getRepository(inview_repo.repo.id).then(data => { displayRepo(data) })
     }
+    if(e.target.matches(".reviews-n-issues")) reviewsAndIssuesComponent().then( component => document.querySelector("#repo-about").innerHTML += component)
+
+    if(e.target.matches("#btn-close-rev-n-issues")) document.querySelector(".card-reviews-issues").remove()
+    if(e.target.matches("#review-sel-project")) getPorjectReviewList(e.target.value).then( list => displayProjectReviwList(list) )
+    if(e.target.matches("#btn-submit-new-issue")) {
+        let frmData = formToJSON("frm-issue-task-list")
+        fetch(`/review-issues/${localStorage.getItem("AUTH_TOKEN")}`, {
+            method: "POST",
+            body: JSON.stringify({
+                repo: inview_repo.repo.id,
+                project: document.querySelector("#review-sel-project").value,
+                tasks: Object.keys(frmData).map( k => k.slice(-1))
+            })
+        })
+        .then( res => {
+            if(res.ok) { document.querySelector("#btn-close-rev-n-issues").click(); document.querySelector(".reviews-n-issues").click(); return null }
+            else return res.text()
+        })
+        .then( d => {
+            if(d) alert(d)
+        })
+    }
 })
 
 

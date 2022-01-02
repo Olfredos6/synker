@@ -1,0 +1,24 @@
+[
+    {
+        "name": "Task",
+        "tasks": [
+            "Use Geonames APIs",
+            "Include error handling"
+        ]
+    },
+    {
+        "name": "Gazetteer",
+        "tasks": [
+            "Add a preloader",
+            "Remove CDNs",
+            "Other..."
+        ]
+    },
+    {
+        "name": "Company Directory",
+        "tasks": [
+            "Remove CDNs",
+            "Must not delete dependent entries"
+        ]
+    }
+]

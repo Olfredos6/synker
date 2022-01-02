@@ -57,5 +57,10 @@ def collect_repos(type=settings.GITHUB_REPO_TYPE, page=1):
     return GET("/user/repos", True, {"type": type, "per_page": 100, "page": page})
 
 
+
+def get_issues(owner, repo):
+    return GET(f"/repos/{owner}/{repo}/issues")
+
+
 def post_new_issue(owner, repo, params):
     return POST(f"/repos/{owner}/{repo}/issues", True, params)

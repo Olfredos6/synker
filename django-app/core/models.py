@@ -9,7 +9,7 @@ import glob
 from time import sleep, time 
 import uuid
 import random
-from sync_utils.github import post_new_issue
+from sync_utils.github import get_issues, post_new_issue
 
 # from . import utils
 # from . import settings
@@ -321,6 +321,10 @@ class Repo(models.Model):
 
     def create_issue(self, title, body):
         return post_new_issue(self.owner_login, self._name, { "title": title, "body": body})
+
+    def get_open_issues(self):
+        return get_issues(self.owner_login, self._name)
+
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances

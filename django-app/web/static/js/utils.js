@@ -113,6 +113,7 @@ function repoAboutComponent(repo) {
             <div class="repo-controls">
                 <i class="bi bi-arrow-repeat" id="repo-reload" data-bs-toggle="tooltip" data-bs-placement="top" title="Reload repository"></i>
                 <i class="bi bi-pencil-square edit-repo-info" data-bs-toggle="modal" data-bs-target="#modal-repo-info"></i>
+                <i class="bi bi-exclamation-circle reviews-n-issues" title="Reviews and Issues"></i>
             </div>
             Last updated: <br/> ${updated_at.toDateString()} - ${updated_at.toLocaleTimeString()}
         </div>
@@ -129,6 +130,51 @@ function repoAboutComponent(repo) {
     </div>
     `
 }
+
+
+async function reviewsAndIssuesComponent() {
+    let html = ''
+    let opened_issues_html = ''
+    tasks = await getReviewTaskListJSON()
+    opened_issues = await fetch(`/review-issues/${localStorage.getItem("AUTH_TOKEN")}?repo=${inview_repo.repo.id}`).then( res => res.json())
+    opened_issues.forEach( issue => {
+        opened_issues_html += `
+        <li class="list-group-item">
+            ${ issue.title }
+            <div>
+                <p class="card-text text-muted my-0">Opened on the ${(new Date(issue.created_at)).toLocaleString()}</p>
+                <p class="card-text text-muted my-0">Closed on the ${(new Date(issue.closed_at)).toLocaleString()}</p>
+            </div>
+        </li>`
+    })
+
+    tasks.forEach(t => {
+        html += "<option value='" + t.name + "'>" + t.name + "</option>"
+    })
+
+    return `<div class="card card-reviews-issues" style="position: absolute;top: 5vh;height: 75vh; z-index: 1; width: 16%">
+                <div class="card-footer">
+                    <button type="button" class="btn btn-danger btn-sm" id="btn-close-rev-n-issues">Quit</button>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="card-subtitle mb-2 text-muted">Open issues</h6>
+                        <div id="open-issues">
+                            ${opened_issues_html}
+                        </div>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">New issue/review as:</h6>
+                    <select class="form-select" aria-label="Default select example" id="review-sel-project">
+                        <option>Choose a project to review</option>
+                        ${html}
+                    </select>
+                    <div id="review-tasks">
+
+                    </div>
+                </div>
+            </div>`
+}
+
 
 function repoBranchManagamentComponent(repo) {
     /**
@@ -290,10 +336,44 @@ function incrementBaseViewCount(base_id) {
     fetch(`/knowledge-base/up-count/${localStorage.getItem("AUTH_TOKEN")}?id=${base_id}`)
 }
 
-function fillKBaseFormWith(base){
+function fillKBaseFormWith(base) {
     base = base.fields
     document.querySelector("[name='k-base-frm']").id.value = base.id
     document.querySelector("[name='k-base-frm']").title.value = base.title
     document.querySelector("[name='k-base-frm']").text.value = base.text
     document.querySelector("[name='k-base-frm']").tags.value = base.tags
+}
+
+function getReviewTaskListJSON() {
+    return fetch("/static/js/issue-task-list.json")
+        .then(res => res.json())
+        .then(d => d)
+}
+
+
+function getPorjectReviewList(project_name){
+    return fetch("/static/js/issue-task-list.json")
+    .then(res => res.json())
+    .then(d => d.find( project => project.name == project_name ).tasks)
+}
+
+function displayProjectReviwList(list){
+    let html = `<p class="my-2">
+                    <strong>Select tasks to complete on this project</strong>
+                </p>
+                <form name="frm-issue-task-list">`
+    list.forEach( (task, index) => {
+        html += `
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="t-${ index }" value="${ index }" id="task-${ index }">
+            <label class="form-check-label" for="task-${ index }">
+                ${ task }
+            </label>
+        </div>`
+    })
+    document.querySelector(".card-reviews-issues .card-body #review-tasks").innerHTML = html + `</form>
+    <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-small" type="button" id="btn-submit-new-issue">Submit new issue</button>
+    </div>
+    `
 }

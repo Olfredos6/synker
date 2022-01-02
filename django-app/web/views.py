@@ -204,7 +204,42 @@ def list_knwoledges(request, token):
 
 def up_view_count(request, token):
     if is_authed(token):
-
-        print(Know.objects.filter(id=request.GET.get('id')).update(click_count=F('click_count') + 1))
+        Know.objects.filter(id=request.GET.get('id')).update(click_count=F('click_count') + 1)
         return HttpResponse(status=200)
+    return HttpResponseForbidden()
+
+
+def list_repo_issues(request, token):
+    if is_authed(token):
+        return JsonResponse( Repo.objects.get(node_id=request.GET.get('repo')).get_open_issues(),safe=False)
+    return HttpResponseForbidden()
+
+
+@csrf_exempt
+def review_issues(request, token):
+    if is_authed(token):
+        if request.method == "POST":
+            body = req_body_to_json(request)
+            tasks_json = []
+            from os import path
+            with open(path.join("/", *__file__.split("/")[:-1], "static", "js", "issue-task-list.json")) as f:
+                tasks_json = json.load(f)
+                print(body, tasks_json)
+            tasks = list(filter(lambda x: x.get('name') == body.get('project'), tasks_json))[0].get('tasks')
+            selected_tasks = [ tasks[t] for t in [ int(i) for i in body.get('tasks')] ]
+            
+            # build issue body
+            issue_body = ""
+            for task in selected_tasks:
+                issue_body += f"\n- [ ] {task}"
+            
+            print(
+                Repo.objects.get(node_id=body.get("repo")).create_issue(
+                    f"{body.get('project')} review",
+                    issue_body
+                )
+            )
+            return HttpResponse(status=200)
+        else:
+            return JsonResponse( Repo.objects.get(node_id=request.GET.get('repo')).get_open_issues(),safe=False)
     return HttpResponseForbidden()
