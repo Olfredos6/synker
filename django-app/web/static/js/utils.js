@@ -337,8 +337,9 @@ function incrementBaseViewCount(base_id) {
 }
 
 function fillKBaseFormWith(base) {
+    id = base.pk
     base = base.fields
-    document.querySelector("[name='k-base-frm']").id.value = base.id
+    document.querySelector("[name='k-base-frm']").id.value = id
     document.querySelector("[name='k-base-frm']").title.value = base.title
     document.querySelector("[name='k-base-frm']").text.value = base.text
     document.querySelector("[name='k-base-frm']").tags.value = base.tags
