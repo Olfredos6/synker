@@ -179,3 +179,8 @@ document.querySelector("#k-base-main").addEventListener("click", e =>{
     if(e.target.matches("#k-base-edit")) fillKBaseFormWith(listed_k_bases.find( base => base.pk == e.target.dataset.base ))
     if(e.target.matches(".btn-clear-k-search")) loadKBases()
 })
+
+
+document.querySelector("#k-base-btn-add").addEventListener("click", e => {
+    document.querySelector("[name=k-base-frm]").reset()
+})
