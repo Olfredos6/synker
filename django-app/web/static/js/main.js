@@ -64,6 +64,7 @@ function render(URL, refresh = false) {
         if (inview_repo) {
             runPreRenderUtilities(inview_repo.repo.id)
             APACHE_URL_LINK.style.display="block"
+            APACHE_URL_LINK.style.cursor="pointer"
             APACHE_URL_LINK.href=URL
         }else {
             APACHE_URL_LINK.style.display="none"
