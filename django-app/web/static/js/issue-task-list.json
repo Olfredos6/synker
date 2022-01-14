@@ -10,15 +10,23 @@
         "name": "Gazetteer",
         "tasks": [
             "Add a preloader",
-            "Remove CDNs",
-            "Other..."
+            "Remove usage of CDNs",
+            "PHP must not render HTML",
+            "Detect device's current location and load its data",
+            "Add country's points of interest markers, spread equally",
+            "Add country's latest news",
+            "Add weather forecast",
+            "Present data proofessionally using widgets and tables where necessary",
+            "All API calls must occur on the backend",
+            "Keep the countryBorders.geo.json file on the sever. Write tow PHP routines, one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country"
         ]
     },
     {
         "name": "Company Directory",
         "tasks": [
             "Remove CDNs",
-            "Must not delete dependent entries"
+            "Must not delete dependent entries",
+            "PHP must not render HTML"
         ]
     }
 ]
