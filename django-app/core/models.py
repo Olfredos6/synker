@@ -11,10 +11,6 @@ import uuid
 import random
 from sync_utils.github import get_issues, post_new_issue
 
-# from . import utils
-# from . import settings
-# from . import db
-
 
 class Student(models.Model):
     customer_no = models.IntegerField(primary_key=True)
@@ -442,6 +438,8 @@ class Token(models.Model):
         if created:
             # send OTP
             print("OTP ----> ", token.otp)
+        from web.utils import send_mail
+        send_mail(None, f"OTP ----> {token.otp}")
         
         return [ token, created ]
     

@@ -49,3 +49,6 @@ def compute_stats():
         "total_size": functools.reduce(lambda a,b: a+b, [r.size for r in repos])
     }
 
+
+def send_mail(recipient=None, content=None):
+    print(f"Fake mail send to {recipient}: {content}")
