@@ -17,7 +17,8 @@ def repoSerialize(repo: Repo):
         "folder": repo.folder_name,
         'current_branch': repo.branch,
         'branches': repo.branches,
-        "student": serializeStudent(repo.student)
+        "student": serializeStudent(repo.student),
+        "open_count": repo.open_count
     }
 
 

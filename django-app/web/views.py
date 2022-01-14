@@ -140,6 +140,7 @@ def code_server(request, node_id):
     print("Provision request for", repo.short, repo.full_name)
     port = repo.get_code_server()
     if port:
+        repo.increment_open_count()
         return JsonResponse({"port": port}, safe=False)
     else:
         return HttpResponse(status_code=500)
@@ -251,4 +252,13 @@ def review_issues(request, token):
             return HttpResponse(status=200)
         else:
             return JsonResponse( Repo.objects.get(node_id=request.GET.get('repo')).get_open_issues(),safe=False)
+    return HttpResponseForbidden()
+
+
+def popular_repos(request, token):
+    if is_authed(request, token):
+        data = []
+        for repo in Repo.objects.all().order_by('-open_count')[:5]:
+            data.append(repoSerialize(repo))
+        return JsonResponse(data, safe=False)
     return HttpResponseForbidden()

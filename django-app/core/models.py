@@ -35,6 +35,7 @@ class Repo(models.Model):
     size = models.IntegerField()
     owner_login = models.CharField(max_length=100, null=False)
     student = models.ForeignKey(Student, related_name="student", on_delete=models.PROTECT, null=True)
+    open_count = models.IntegerField(default=0)
 
     @property
     def name(self):
@@ -324,6 +325,9 @@ class Repo(models.Model):
 
     def get_open_issues(self):
         return get_issues(*self.full_name.split("/"))
+
+    def increment_open_count(self):
+        print("Updating open count", Repo.objects.filter(node_id=self.node_id).update(open_count=models.F('open_count')+1))
 
 
 class CodeServerPort(models.Model):
