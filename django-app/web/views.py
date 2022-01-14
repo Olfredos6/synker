@@ -256,9 +256,13 @@ def review_issues(request, token):
 
 
 def popular_repos(request, token):
+    '''
+        Out of the most recently updated repos, this view returns 
+        the 5 most browsed.
+    '''
     if is_authed(request, token):
         data = []
-        for repo in Repo.objects.all().order_by('-open_count')[:5]:
+        for repo in Repo.objects.all().order_by('-updated_at', '-open_count')[:5]:
             data.append(repoSerialize(repo))
         return JsonResponse(data, safe=False)
     return HttpResponseForbidden()
