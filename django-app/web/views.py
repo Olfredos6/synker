@@ -261,7 +261,7 @@ def popular_repos(request, token):
     '''
     if is_authed(request, token):
         data = []
-        for repo in Repo.objects.all().order_by('-updated_at', '-open_count')[:5]:
+        for repo in Repo.recent_populars():
             data.append(repoSerialize(repo))
         return JsonResponse(data, safe=False)
     return HttpResponseForbidden()

@@ -20,6 +20,7 @@ class Student(models.Model):
 
 
 class Repo(models.Model):
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
     node_id = models.CharField(max_length=32, null=False, primary_key=True)
     student = models.ForeignKey(Student, related_name="st_owner", on_delete=models.PROTECT, null=True)
     type = models.CharField(max_length=10, null=False)
@@ -44,6 +45,10 @@ class Repo(models.Model):
         else:
             x = self.full_name
             return x[x.index("/")+1:]
+
+    @staticmethod
+    def recent_populars():
+        return Repo.objects.all().order_by('-updated_at', '-open_count')[:5]
 
     @staticmethod
     def create_from_payload(type, **kwargs):
