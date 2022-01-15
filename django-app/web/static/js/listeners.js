@@ -58,6 +58,13 @@ document.querySelector("#repo-about").addEventListener("click", (e) => {
             if(d) alert(d)
         })
     }
+    if(e.target.matches("#btn-get-issue-text")) {
+        let html = ""
+        Object.values(formToJSON("frm-issue-task-list")).forEach( i => {
+            html += `<li> ${document.querySelector("[name=frm-issue-task-list]").children[i].innerText} </li>`
+        })
+        document.querySelector("#review-email-text .modal-body").innerHTML = `<ul>${html}</ul>`
+    }
 })
 
 

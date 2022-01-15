@@ -2,3 +2,8 @@
     border-top: unset;
     border-bottom: unset;
 }
+
+[name='frm-issue-task-list'] {
+    height: 48vh;
+    overflow-y: scroll;
+}

@@ -378,7 +378,7 @@ function displayProjectReviwList(list){
     document.querySelector(".card-reviews-issues .card-body #review-tasks").innerHTML = html + `</form>
     <div class="d-grid gap-2">
         <button class="btn btn-primary btn-small" type="button" id="btn-submit-new-issue">Submit new issue</button>
-        <button class="btn btn-warning btn-small" type="button" id="btn-get-issue-text">Get text for email</button>
+        <button class="btn btn-warning btn-small" type="button" data-bs-toggle="modal" data-bs-target="#review-email-text" id="btn-get-issue-text">Get text for email</button>
     </div>
     `
 }
