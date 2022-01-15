@@ -42,7 +42,7 @@ document.querySelector("#repo-about").addEventListener("click", (e) => {
     if(e.target.matches("#review-sel-project")) getPorjectReviewList(e.target.value).then( list => displayProjectReviwList(list) )
     if(e.target.matches("#btn-submit-new-issue")) {
         let frmData = formToJSON("frm-issue-task-list")
-        fetch(`/review-issues/${localStorage.getItem("AUTH_TOKEN")}`, {
+        fetch(`/review-issues/${GET_TOKEN()}`, {
             method: "POST",
             body: JSON.stringify({
                 repo: inview_repo.repo.id,
@@ -69,6 +69,20 @@ document.querySelector("#txt-search").addEventListener('click', () => {
     }
     else
         REPO_WAS_EDITED = 999
+    
+    // collect and display most browsed repos
+    getMostPopularRepos()
+    .then( data => {
+        let repos_html = ''
+        data.forEach(repo => {
+            repos_html += `<li class="list-group-item repo-list-item" data-id="${repo.id}" data-bs-toggle="tooltip" data-bs-placement="right" title="${repo.full_name}">${repo.full_name.length < 20 ? repo.full_name : repo.full_name.substr(0, 20) + "..."}</li>`
+        })
+        resultListElement.innerHTML = `
+        <hr>
+        <h6 style="text-align: center;">Recent most browsed</h6>
+        ${repos_html}
+        `
+    })
 })
 
 $("#tree").on("click", "summary[class=selected]", e => {
@@ -154,7 +168,7 @@ document.querySelector("#k-base-frm-btn-submit").addEventListener("click", () =>
     if (!formData.id) {
         delete formData.id
     }
-    fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}`, {
+    fetch(`/knowledge-base/${GET_TOKEN()}`, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
@@ -183,4 +197,8 @@ document.querySelector("#k-base-main").addEventListener("click", e =>{
 
 document.querySelector("#k-base-btn-add").addEventListener("click", e => {
     document.querySelector("[name=k-base-frm]").reset()
+})
+
+document.querySelector("body").addEventListener("click", e => {
+    if(!e.target.matches("#txt-search")) resultListElement.innerHTML = "" // clear it, make it disappear
 })
