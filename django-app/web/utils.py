@@ -37,6 +37,7 @@ def serializeStudent(student: Student) -> dict:
 def get_json_parsable_repo_data(id):
     data = {"repo": None, "struct": None}
     repo = get_object_or_404(Repo, node_id=id)
+    repo.increment_open_count()
     data["repo"] = repoSerialize(repo)
     data["struct"] = repo.dir_struct()    
     return data
@@ -46,7 +47,9 @@ def compute_stats():
     repos = Repo.objects.all()
     return {
         "repo_count": repos.count(),
-        "total_size": functools.reduce(lambda a,b: a+b, [r.size for r in repos])
+        "total_size": functools.reduce(lambda a,b: a+b, [r.size for r in repos]),
+        "latest_repos": [ repoSerialize(repo) for repo in Repo.objects.all().order_by("-date_added")[:5]],
+        "popular_repos": [ repoSerialize(repo) for repo in Repo.recent_populars()]
     }
 
 

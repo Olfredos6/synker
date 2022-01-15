@@ -1,5 +1,7 @@
 /** No UI handling */
 
+GET_TOKEN = () => localStorage.getItem("AUTH_TOKEN")
+
 function notify(message) {
     alert(message)
 }
@@ -136,7 +138,7 @@ async function reviewsAndIssuesComponent() {
     let html = ''
     let opened_issues_html = ''
     tasks = await getReviewTaskListJSON()
-    opened_issues = await fetch(`/review-issues/${localStorage.getItem("AUTH_TOKEN")}?repo=${inview_repo.repo.id}`).then( res => res.json())
+    opened_issues = await fetch(`/review-issues/${GET_TOKEN()}?repo=${inview_repo.repo.id}`).then( res => res.json())
     opened_issues.forEach( issue => {
         opened_issues_html += `
         <li class="list-group-item">
@@ -327,14 +329,15 @@ function updateAuthToken() {
 }
 
 function getKBases(search = null) {
-    return fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}${search ? '?search=' + search : ''}`)
+    return fetch(`/knowledge-base/${GET_TOKEN()}${search ? '?search=' + search : ''}`)
         .then(res => res.json())
         .then(data => data)
 }
 
 function incrementBaseViewCount(base_id) {
-    fetch(`/knowledge-base/up-count/${localStorage.getItem("AUTH_TOKEN")}?id=${base_id}`)
+    fetch(`/knowledge-base/up-count/${GET_TOKEN()}?id=${base_id}`)
 }
+
 
 function fillKBaseFormWith(base) {
     id = base.pk
@@ -378,4 +381,13 @@ function displayProjectReviwList(list){
         <button class="btn btn-warning btn-small" type="button" id="btn-get-issue-text">Get text for email</button>
     </div>
     `
+}
+
+
+function getMostPopularRepos(){
+    return fetch(`/repo/most-populars/${GET_TOKEN()}`)
+    .then( res => {
+        if(res.ok) return res.json()
+        else return []
+    })
 }
