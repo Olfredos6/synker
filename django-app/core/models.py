@@ -56,7 +56,7 @@ class Repo(models.Model):
         new_repo.node_id = kwargs.get('node_id')
         new_repo._name = kwargs.get('name')
         new_repo.full_name = kwargs.get('full_name')
-        new_repo.updated_at = kwargs.get('updated_at')
+        new_repo.updated_at = kwargs.get('pushed_at') # based on the difference between pushed_at and updated_at https://stackoverflow.com/a/15922637/5253580
         new_repo.clone_url = kwargs.get('clone_url')
         new_repo.size = kwargs.get('size')
         new_repo.owner_login = kwargs.get('owner').get('login')
@@ -67,7 +67,7 @@ class Repo(models.Model):
     def check_update():
         ''' 
             For each known repos URL, check if the repo
-            updated_at timstamp has changed. If so, sync the repo.
+            pushed_at timstamp has changed. If so, sync the repo.
         '''
         pass
 
@@ -87,7 +87,7 @@ class Repo(models.Model):
 
     def update_db(self, **payload):
         '''
-            Updates the repo's data on on the databse. 
+            Updates the repo's data on the databse. 
             For now, the most important piece of information
             requiring an update is the updated_at timestamp. 
             This info is updated everytime the repo is pulled.

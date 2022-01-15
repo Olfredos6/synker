@@ -140,7 +140,6 @@ def code_server(request, node_id):
     print("Provision request for", repo.short, repo.full_name)
     port = repo.get_code_server()
     if port:
-        repo.increment_open_count()
         return JsonResponse({"port": port}, safe=False)
     else:
         return HttpResponse(status_code=500)

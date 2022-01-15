@@ -45,7 +45,7 @@ def fetch_all(type=settings.GITHUB_REPO_TYPE):
 
             feedback = repository.sync(
                 datetime.strptime(
-                    r.get('updated_at'),
+                    r.get('pushed_at'),
                     "%Y-%m-%dT%H:%M:%SZ"
                     ),
                     r.get('size'))
