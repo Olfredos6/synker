@@ -9,16 +9,21 @@
     {
         "name": "Gazetteer",
         "tasks": [
+            " Map needs to fit viewport exactly on all devices.",
+            "Try making top transparent and giving an absolute positioning.",
             "Add a preloader",
             "Remove usage of CDNs",
             "PHP must not render HTML",
             "Detect device's current location and load its data",
-            "Add country's points of interest markers, spread equally",
+            "Add country's points of interest markers. Markers should be evenly distributed across the map",
             "Add country's latest news",
             "Add weather forecast",
             "Present data proofessionally using widgets and tables where necessary",
             "All API calls must occur on the backend",
-            "Keep the countryBorders.geo.json file on the sever. Write tow PHP routines, one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country"
+            "Keep the countryBorders.geo.json file on the sever. Write tow PHP routines, one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country",
+            "Use Leaflet ExtraMarkers(https://github.com/coryasilva/Leaflet.ExtraMarkers)",
+            "Format all numbers properly.",
+            "Remove all errors from console."
         ]
     },
     {
