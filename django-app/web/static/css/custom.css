@@ -7,3 +7,12 @@
     height: 48vh;
     overflow-y: scroll;
 }
+
+.k-base-title-foot {
+    position: absolute;
+    bottom: -15px;
+    margin-top: 10px;
+    color: #56563a;
+    float: right;
+    font-size: .8rem;
+}

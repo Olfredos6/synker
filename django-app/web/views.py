@@ -176,7 +176,7 @@ def list_knwoledges(request, token):
 
             # to edit a know, insert its primary key value in the payload
             if payload.get('id', None):
-                print(Know.objects.filter(id=payload.get("id")).update(                    
+                print(Know.objects.filter(id=payload.get("id")).update(                  
                     last_edited_by=token.email,
                     title=payload.get('title'),
                     tags=payload.get('tags'),
@@ -185,6 +185,7 @@ def list_knwoledges(request, token):
                 new_know = Know.objects.get(id=payload.get('id'))
             else:
                 new_know = Know.objects.create(
+                    created_by=token.email, 
                     last_edited_by=token.email,
                     title=payload.get('title'),
                     tags=payload.get('tags'),

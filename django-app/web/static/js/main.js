@@ -140,6 +140,9 @@ function loadKBases(search=null){
                 <h2 class="accordion-header">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-base="${base_id}" data-bs-target="#base-${base_id}" aria-expanded="true" aria-controls="collapseOne">
                     ${ base.title }
+                    <p class="k-base-title-foot">
+                    by ${base.created_by}, last edited by ${base.last_edited_by} on the ${new Date(base.last_edited).toGMTString()}
+                    </p>
                 </button>
                 </h2>
                 <div id="base-${base_id}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">

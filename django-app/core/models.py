@@ -463,6 +463,7 @@ class KnowTag(models.Model):
 
 class Know(models.Model):
     doc = models.DateTimeField(auto_now_add=True)
+    created_by = models.TextField(default="Not recorded!")
     last_edited = models.DateTimeField(auto_now=True)
     last_edited_by = models.EmailField(null=False)
     title = models.CharField(max_length=100)
