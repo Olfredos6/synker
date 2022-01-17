@@ -48,7 +48,7 @@ class Repo(models.Model):
 
     @staticmethod
     def recent_populars():
-        return Repo.objects.all().order_by('-updated_at', '-open_count')[:5]
+        return Repo.objects.all().order_by( '-open_count','-updated_at')[:5]
 
     @staticmethod
     def create_from_payload(type, **kwargs):
