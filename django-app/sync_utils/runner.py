@@ -24,7 +24,7 @@ def fetch_all(type=settings.GITHUB_REPO_TYPE):
 
     while collect_next_page:
         repos = github.collect_repos(type, page=next_page)
-        print(f"----> Collected {len(repos)} repos from page {next_page} of results")
+        # print(f"----> Collected {len(repos)} repos from page {next_page} of results")
 
         if len(repos) < settings.GITHUB_PER_PAGE:
             collect_next_page = False
@@ -54,7 +54,7 @@ def fetch_all(type=settings.GITHUB_REPO_TYPE):
             elif feedback == 2:
                 stats['cloned'] += 1
         
-    print(stats)
+    print(datetime.now(), stats)
 
 import threading
 def run():

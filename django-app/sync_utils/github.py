@@ -53,7 +53,7 @@ def collect_repos(type=settings.GITHUB_REPO_TYPE, page=1):
             type: type of repo
             page: result page number
     '''
-    print(f"Collecting repos of type {type}")
+    # print(f"Collecting repos of type {type}")
     return GET("/user/repos", True, {"type": type, "per_page": 100, "page": page})
 
 
