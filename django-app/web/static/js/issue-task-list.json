@@ -9,10 +9,15 @@
     {
         "name": "Gazetteer",
         "tasks": [
-            " Map needs to fit viewport exactly on all devices.",
+            "Rename application to Gazetteer.",
+            "Remove location marker",
+            "Map needs to fit viewport exactly on all devices.",
+            "Use L.geoJSON() styling options",
+            "Make use of the fitBounds() method(https://leafletjs.com/reference.html#map-fitbounds)",
             "Try making top transparent and giving an absolute positioning.",
             "Add a preloader",
             "Remove usage of CDNs",
+            "Clear previous layers(markers, borders, etc...) before adding the newly selected country's",
             "PHP must not render HTML",
             "Detect device's current location and load its data",
             "Add country's points of interest markers. Markers should be evenly distributed across the map",
@@ -21,9 +26,11 @@
             "Present data proofessionally using widgets and tables where necessary",
             "All API calls must occur on the backend",
             "Keep the countryBorders.geo.json file on the sever. Write tow PHP routines, one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country",
+            "Use Leaflet markerCLuster(https://github.com/Leaflet/Leaflet.markercluster)",
             "Use Leaflet ExtraMarkers(https://github.com/coryasilva/Leaflet.ExtraMarkers)",
-            "Format all numbers properly.",
-            "Remove all errors from console."
+            "Format all dates and numbers - dateJS & numeralJS.",
+            "Remove all errors from console.",
+            "Use Bootstrap modals and tables."
         ]
     },
     {

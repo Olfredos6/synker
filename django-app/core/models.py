@@ -260,9 +260,7 @@ class Repo(models.Model):
             ''' traverse dir at path to form a structure inside
                 parent and return the updated parent
             '''
-            # print(f"Traversing {path}")
             for entry in scandir(path):
-                parent["-"] = [] # will list files 
                 if entry.is_dir():
                     parent[entry.name] = {"-": []}
                     traverse(entry, parent[entry.name])
@@ -270,7 +268,7 @@ class Repo(models.Model):
                     parent.get("-").append(entry.name)
             
             return parent
-        
+
         return traverse(self.path,{"-": []})
 
     def find_file_update(self, filename, content):
