@@ -108,10 +108,16 @@ function showSourceCode(port) {
 }
 
 function killCodeServerView() {
-    source_code_viewer.src = ""
-    BTN_TAB_CODE.innerText = "Code"
-    BTN_TAB_CODE.classList.add("disabled")
-    BTN_TAB_RENDERER.click()
+    // only kill if the repo in view has changed
+    if(source_code_viewer.src.indexOf(inview_repo.repo.folder) == -1) {
+        source_code_viewer.src = ""
+        BTN_TAB_CODE.innerText = "Code"
+        BTN_TAB_CODE.classList.add("disabled")
+        BTN_TAB_RENDERER.click()
+    }
+    else{
+        console.log(`Cannot kill codeserver whilst repo in view has not changed`)
+    }
 }
 
 function createOrUpdateRepoStudentInfo(data) {
