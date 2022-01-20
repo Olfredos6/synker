@@ -49,7 +49,8 @@ def compute_stats():
         "repo_count": repos.count(),
         "total_size": functools.reduce(lambda a,b: a+b, [r.size for r in repos]),
         "latest_repos": [ repoSerialize(repo) for repo in Repo.objects.all().order_by("-date_added")[:5]],
-        "popular_repos": [ repoSerialize(repo) for repo in Repo.recent_populars()]
+        "popular_repos": [ repoSerialize(repo) for repo in Repo.recent_populars()],
+        "recently_updated_repos": [ repoSerialize(repo) for repo in Repo.objects.all().order_by("-updated_at")[:5]]
     }
 
 

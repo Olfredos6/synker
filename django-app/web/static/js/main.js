@@ -122,6 +122,14 @@ function createOrUpdateRepoStudentInfo(data) {
         })
 }
 
+function repoListItemClickHandler(event) {
+
+    resultListElement.innerHTML = ""
+    document.getElementById('tree').innerHTML = spinnerComponent()
+    getRepository(event.target.dataset.id).then(data => { displayRepo(data) })
+}
+
+
 function repoCheckoutBranch(repo_id, branch) {
     // using query string because branch names can be tricky to handle
     return fetch(`/repo/${repo_id}/branches/checkout?b=${branch}`)
