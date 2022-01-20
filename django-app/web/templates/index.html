@@ -51,11 +51,18 @@
       <div class="col-10 content">
         <ul class="nav nav-tabs" id="nav-tab" role="tablist">
           <li class="nav-item btn-refresh-iframe">
-            <i class="bi bi-arrow-clockwise"></i> refresh renderer
+            <i class="bi bi-arrow-clockwise" style="
+            font-size: 1.1rem;
+            cursor: pointer;
+        "></i>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="btn-renderer-tab" data-bs-toggle="tab" data-bs-target="#renderer"
-              type="button" role="tab" aria-controls="home" aria-selected="true">Render view</button>
+            <button class="nav-link active" id="btn-home-tab" data-bs-toggle="tab" data-bs-target="#home-tab"
+              type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="btn-renderer-tab" data-bs-toggle="tab" data-bs-target="#renderer"
+              type="button" role="tab" aria-controls="home" aria-selected="true">Repo Preview</button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="btn-code-tab" data-bs-toggle="tab" data-bs-target="#source-code" type="button"
@@ -72,10 +79,15 @@
         </ul>
         <div class="tab-content" id="nav-tab-content">
           <!-- <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div> -->
-          <iframe class="tab-pane fade show active" id="renderer" role="tabpanel" aria-labelledby="renderer-tab" src=""
+          <iframe class="tab-pane fade show active" id="home-tab" role="tabpanel" aria-labelledby="home-tab" src=""
             frameborder="0"></iframe>
+
+          <iframe class="tab-pane fade" id="renderer" role="tabpanel" aria-labelledby="renderer-tab" src=""
+            frameborder="0"></iframe>
+
           <iframe class="tab-pane fade" id="source-code" role="tabpanel" aria-labelledby="code-tab" src=""
             frameborder="0"></iframe>
+
           <div class="tab-pane fade" id="k-base">
             <h1>K-Base for ITCS Coding</h1>
             <div class="mb-3">

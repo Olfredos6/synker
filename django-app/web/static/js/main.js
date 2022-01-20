@@ -1,6 +1,7 @@
 /** UI handling */
 const resultListElement = document.querySelector("#search-result")
 const renderer = document.querySelector("#renderer")
+const home_frame = document.querySelector("#home-tab")
 const BTN_TAB_RENDERER = document.querySelector("#btn-renderer-tab")
 const BTN_TAB_CODE = document.querySelector("#btn-code-tab")
 const source_code_viewer = document.querySelector("#source-code")
@@ -54,29 +55,39 @@ function displayRepoTree(struct) {
     tree.json(structPrepareTreeJS(struct))
 }
 
-function render(URL, refresh = false) {
+function render(URL, refresh = false, tab=undefined) {
+    /**
+     * Renders URL in specfied tab. By default uses renderer
+     */
+    if(!tab){ tab = "renderer"}
+    const IFRAME = document.querySelector(`#${tab}`)
     if (!refresh) {
-        killCodeServerView()
-        BTN_TAB_RENDERER.click()
-        BTN_TAB_CODE.classList.remove("disabled")
+        if(tab=="renderer"){
 
+            killCodeServerView()
+            BTN_TAB_RENDERER.click()
+            BTN_TAB_CODE.classList.remove("disabled")
 
-        if (inview_repo) {
-            runPreRenderUtilities(inview_repo.repo.id)
-            APACHE_URL_LINK.style.display="block"
-            APACHE_URL_LINK.style.cursor="pointer"
-            APACHE_URL_LINK.href=URL
-        }else {
-            APACHE_URL_LINK.style.display="none"
-            APACHE_URL_LINK.href=""
-        }
-        
-        if (renderer.src !== URL) {// we only update if the URL changes. preventing unecessary reloads
-            renderer.src = URL
+            if (inview_repo) {
+                runPreRenderUtilities(inview_repo.repo.id)
+                APACHE_URL_LINK.style.display="block"
+                APACHE_URL_LINK.style.cursor="pointer"
+                APACHE_URL_LINK.href=URL
+            }else {
+                APACHE_URL_LINK.style.display="none"
+                APACHE_URL_LINK.href=""
+            }
+            
+            if (IFRAME.src !== URL) {// we only update if the URL changes. preventing unecessary reloads
+                IFRAME.src = URL
+            }
+        }  
+        else {
+            IFRAME.src = URL
         }
     }
     else {
-        renderer.src = URL
+        IFRAME.src = URL
     }
 }
 
@@ -175,5 +186,5 @@ function loadKBases(search=null){
 }
 
 updateAuthToken()
-render("/stats")
+render("/stats", false, "home-tab")
 loadKBases()
