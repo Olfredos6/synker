@@ -100,8 +100,8 @@ $("#tree").on("click", "summary[class=selected]", e => {
 $("#tree").on("click", "a", e => {
     // @TODO: Debounce
     const pathToDir = rebuildDirPath(e.target)
-    // render(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
-    console.log(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
+    render(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
+    // console.log(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
 })
 
 
