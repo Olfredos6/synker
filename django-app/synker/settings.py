@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = environ.get('DJANGO_DEBUG')
+DEBUG = int(environ.get('DJANGO_DEBUG'))
 
 ALLOWED_HOSTS = environ.get('DJANGO_ALLOWED_HOST')
 
@@ -189,6 +189,7 @@ AUTH_TOKEN_LIFETIME = int(environ.get("AUTH_TOKEN_LIFETIME"))
 AUTH_VALID_EMAILS = [ email + "@itcareerswitch.co.uk" for email in environ.get("AUTH_VALID_EMAILS", "").split(",")  ]
 
 print(f"""
+    DJANGO DEBUG: {DEBUG}
     STATIC ROOT: {STATIC_ROOT}
     SYNKER REPOS DIR: {SYNKER_REPO_DIR}
     GITHUB Per page: {GITHUB_PER_PAGE}

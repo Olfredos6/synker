@@ -11,10 +11,6 @@ import uuid
 import random
 from sync_utils.github import get_issues, post_new_issue
 
-# from . import utils
-# from . import settings
-# from . import db
-
 
 class Student(models.Model):
     customer_no = models.IntegerField(primary_key=True)
@@ -24,6 +20,7 @@ class Student(models.Model):
 
 
 class Repo(models.Model):
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
     node_id = models.CharField(max_length=32, null=False, primary_key=True)
     student = models.ForeignKey(Student, related_name="st_owner", on_delete=models.PROTECT, null=True)
     type = models.CharField(max_length=10, null=False)
@@ -35,6 +32,7 @@ class Repo(models.Model):
     size = models.IntegerField()
     owner_login = models.CharField(max_length=100, null=False)
     student = models.ForeignKey(Student, related_name="student", on_delete=models.PROTECT, null=True)
+    open_count = models.IntegerField(default=0)
 
     @property
     def name(self):
@@ -49,6 +47,10 @@ class Repo(models.Model):
             return x[x.index("/")+1:]
 
     @staticmethod
+    def recent_populars():
+        return Repo.objects.all().order_by( '-open_count','-updated_at')[:5]
+
+    @staticmethod
     def create_from_payload(type, **kwargs):
         '''
             Simplifies creating Repo objects using GitHub's repository payload
@@ -59,7 +61,7 @@ class Repo(models.Model):
         new_repo.node_id = kwargs.get('node_id')
         new_repo._name = kwargs.get('name')
         new_repo.full_name = kwargs.get('full_name')
-        new_repo.updated_at = kwargs.get('updated_at')
+        new_repo.updated_at = kwargs.get('pushed_at') # based on the difference between pushed_at and updated_at https://stackoverflow.com/a/15922637/5253580
         new_repo.clone_url = kwargs.get('clone_url')
         new_repo.size = kwargs.get('size')
         new_repo.owner_login = kwargs.get('owner').get('login')
@@ -70,7 +72,7 @@ class Repo(models.Model):
     def check_update():
         ''' 
             For each known repos URL, check if the repo
-            updated_at timstamp has changed. If so, sync the repo.
+            pushed_at timstamp has changed. If so, sync the repo.
         '''
         pass
 
@@ -90,7 +92,7 @@ class Repo(models.Model):
 
     def update_db(self, **payload):
         '''
-            Updates the repo's data on on the databse. 
+            Updates the repo's data on the databse. 
             For now, the most important piece of information
             requiring an update is the updated_at timestamp. 
             This info is updated everytime the repo is pulled.
@@ -258,9 +260,7 @@ class Repo(models.Model):
             ''' traverse dir at path to form a structure inside
                 parent and return the updated parent
             '''
-            # print(f"Traversing {path}")
             for entry in scandir(path):
-                parent["-"] = [] # will list files 
                 if entry.is_dir():
                     parent[entry.name] = {"-": []}
                     traverse(entry, parent[entry.name])
@@ -268,7 +268,7 @@ class Repo(models.Model):
                     parent.get("-").append(entry.name)
             
             return parent
-        
+
         return traverse(self.path,{"-": []})
 
     def find_file_update(self, filename, content):
@@ -323,7 +323,10 @@ class Repo(models.Model):
         return post_new_issue(self.owner_login, self._name, { "title": title, "body": body})
 
     def get_open_issues(self):
-        return get_issues(self.owner_login, self._name)
+        return get_issues(*self.full_name.split("/"))
+
+    def increment_open_count(self):
+        print("Updating open count", Repo.objects.filter(node_id=self.node_id).update(open_count=models.F('open_count')+1))
 
 
 class CodeServerPort(models.Model):
@@ -438,6 +441,8 @@ class Token(models.Model):
         if created:
             # send OTP
             print("OTP ----> ", token.otp)
+        from web.utils import send_mail
+        send_mail(None, f"OTP ----> {token.otp}")
         
         return [ token, created ]
     
@@ -456,6 +461,7 @@ class KnowTag(models.Model):
 
 class Know(models.Model):
     doc = models.DateTimeField(auto_now_add=True)
+    created_by = models.TextField(default="Not recorded!")
     last_edited = models.DateTimeField(auto_now=True)
     last_edited_by = models.EmailField(null=False)
     title = models.CharField(max_length=100)

@@ -19,14 +19,13 @@ document.querySelector(".btn-refresh-iframe").addEventListener('click', (e) => {
     render(renderer.src, true)
 })
 
+
 $("body").on("click", ".repo-list-item", (e) => {
     /**
-     * Triggered when a repo item is clicked from the repo search result
-     * Get and displays repo data, structure, etc..
-     */
-    resultListElement.innerHTML = ""
-    document.getElementById('tree').innerHTML = spinnerComponent()
-    getRepository(e.target.dataset.id).then(data => { displayRepo(data) })
+ * Triggered when a repo item is clicked from the repo search result
+ * Get and displays repo data, structure, etc..
+ */
+    repoListItemClickHandler(e)
 })
 
 
@@ -36,27 +35,34 @@ document.querySelector("#repo-about").addEventListener("click", (e) => {
         document.getElementById('tree').innerHTML = spinnerComponent()
         getRepository(inview_repo.repo.id).then(data => { displayRepo(data) })
     }
-    if(e.target.matches(".reviews-n-issues")) reviewsAndIssuesComponent().then( component => document.querySelector("#repo-about").innerHTML += component)
+    if (e.target.matches(".reviews-n-issues")) reviewsAndIssuesComponent().then(component => document.querySelector("#repo-about").innerHTML += component)
 
-    if(e.target.matches("#btn-close-rev-n-issues")) document.querySelector(".card-reviews-issues").remove()
-    if(e.target.matches("#review-sel-project")) getPorjectReviewList(e.target.value).then( list => displayProjectReviwList(list) )
-    if(e.target.matches("#btn-submit-new-issue")) {
+    if (e.target.matches("#btn-close-rev-n-issues")) document.querySelector(".card-reviews-issues").remove()
+    if (e.target.matches("#review-sel-project")) getPorjectReviewList(e.target.value).then(list => displayProjectReviwList(list))
+    if (e.target.matches("#btn-submit-new-issue")) {
         let frmData = formToJSON("frm-issue-task-list")
-        fetch(`/review-issues/${localStorage.getItem("AUTH_TOKEN")}`, {
+        fetch(`/review-issues/${GET_TOKEN()}`, {
             method: "POST",
             body: JSON.stringify({
                 repo: inview_repo.repo.id,
                 project: document.querySelector("#review-sel-project").value,
-                tasks: Object.keys(frmData).map( k => k.slice(-1))
+                tasks: Object.keys(frmData).map(k => k.slice(-1))
             })
         })
-        .then( res => {
-            if(res.ok) { document.querySelector("#btn-close-rev-n-issues").click(); document.querySelector(".reviews-n-issues").click(); return null }
-            else return res.text()
+            .then(res => {
+                if (res.ok) { document.querySelector("#btn-close-rev-n-issues").click(); document.querySelector(".reviews-n-issues").click(); return null }
+                else return res.text()
+            })
+            .then(d => {
+                if (d) alert(d)
+            })
+    }
+    if (e.target.matches("#btn-get-issue-text")) {
+        let html = ""
+        Object.values(formToJSON("frm-issue-task-list")).forEach(i => {
+            html += `<li> ${document.querySelector("[name=frm-issue-task-list]").children[i].innerText} </li>`
         })
-        .then( d => {
-            if(d) alert(d)
-        })
+        document.querySelector("#review-email-text .modal-body").innerHTML = `<ul>${html}</ul>`
     }
 })
 
@@ -69,12 +75,33 @@ document.querySelector("#txt-search").addEventListener('click', () => {
     }
     else
         REPO_WAS_EDITED = 999
+
+    // collect and display most browsed repos
+    getMostPopularRepos()
+        .then(data => {
+            let repos_html = ''
+            data.forEach(repo => {
+                repos_html += `<li class="list-group-item repo-list-item" data-id="${repo.id}" data-bs-toggle="tooltip" data-bs-placement="right" title="${repo.full_name}">${repo.full_name.length < 20 ? repo.full_name : repo.full_name.substr(0, 20) + "..."}</li>`
+            })
+            resultListElement.innerHTML = `
+        <hr>
+        <h6 style="text-align: center;">Recent most browsed</h6>
+        ${repos_html}
+        `
+        })
 })
 
 $("#tree").on("click", "summary[class=selected]", e => {
     // @TODO: Debounce
     const pathToDir = rebuildDirPath(e.target)
     render(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
+})
+
+$("#tree").on("click", "a", e => {
+    // @TODO: Debounce
+    const pathToDir = rebuildDirPath(e.target)
+    render(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
+    // console.log(`${PHP_SERVER}/${inview_repo.repo.id}/${pathToDir}`)
 })
 
 
@@ -154,7 +181,7 @@ document.querySelector("#k-base-frm-btn-submit").addEventListener("click", () =>
     if (!formData.id) {
         delete formData.id
     }
-    fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}`, {
+    fetch(`/knowledge-base/${GET_TOKEN()}`, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
@@ -174,8 +201,17 @@ document.querySelector("#k-base-search-key").addEventListener("input", e => {
     }
 })
 
-document.querySelector("#k-base-main").addEventListener("click", e =>{
-    if(e.target.matches(".accordion-button")) incrementBaseViewCount( e.target.dataset.base )
-    if(e.target.matches("#k-base-edit")) fillKBaseFormWith(listed_k_bases.find( base => base.pk == e.target.dataset.base ))
-    if(e.target.matches(".btn-clear-k-search")) loadKBases()
+document.querySelector("#k-base-main").addEventListener("click", e => {
+    if (e.target.matches(".accordion-button")) incrementBaseViewCount(e.target.dataset.base)
+    if (e.target.matches("#k-base-edit")) fillKBaseFormWith(listed_k_bases.find(base => base.pk == e.target.dataset.base))
+    if (e.target.matches(".btn-clear-k-search")) loadKBases()
+})
+
+
+document.querySelector("#k-base-btn-add").addEventListener("click", e => {
+    document.querySelector("[name=k-base-frm]").reset()
+})
+
+document.querySelector("body").addEventListener("click", e => {
+    if (!e.target.matches("#txt-search")) resultListElement.innerHTML = "" // clear it, make it disappear
 })

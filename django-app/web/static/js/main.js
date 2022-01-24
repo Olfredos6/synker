@@ -1,6 +1,7 @@
 /** UI handling */
 const resultListElement = document.querySelector("#search-result")
 const renderer = document.querySelector("#renderer")
+const home_frame = document.querySelector("#home-tab")
 const BTN_TAB_RENDERER = document.querySelector("#btn-renderer-tab")
 const BTN_TAB_CODE = document.querySelector("#btn-code-tab")
 const source_code_viewer = document.querySelector("#source-code")
@@ -10,7 +11,7 @@ let APACHE_URL = undefined
 const FRM_EDIT_ST_DETAILS = document.querySelector("[name=frm-edit-repo-st-info]")
 
 let inview_repo = undefined
-const DEFAULT_SERVER = "http://142.93.35.195"
+const DEFAULT_SERVER = location.origin
 const PHP_SERVER = `${DEFAULT_SERVER}:3001`
 let REPO_WAS_EDITED = 0
 const CSRF_TOKEN = undefined
@@ -54,28 +55,39 @@ function displayRepoTree(struct) {
     tree.json(structPrepareTreeJS(struct))
 }
 
-function render(URL, refresh = false) {
+function render(URL, refresh = false, tab=undefined) {
+    /**
+     * Renders URL in specfied tab. By default uses renderer
+     */
+    if(!tab){ tab = "renderer"}
+    const IFRAME = document.querySelector(`#${tab}`)
     if (!refresh) {
-        killCodeServerView()
-        BTN_TAB_RENDERER.click()
-        BTN_TAB_CODE.classList.remove("disabled")
+        if(tab=="renderer"){
 
+            killCodeServerView()
+            BTN_TAB_RENDERER.click()
+            BTN_TAB_CODE.classList.remove("disabled")
 
-        if (inview_repo) {
-            runPreRenderUtilities(inview_repo.repo.id)
-            APACHE_URL_LINK.style.display="block"
-            APACHE_URL_LINK.href=URL
-        }else {
-            APACHE_URL_LINK.style.display="none"
-            APACHE_URL_LINK.href=""
-        }
-        
-        if (renderer.src !== URL) {// we only update if the URL changes. preventing unecessary reloads
-            renderer.src = URL
+            if (inview_repo) {
+                runPreRenderUtilities(inview_repo.repo.id)
+                APACHE_URL_LINK.style.display="block"
+                APACHE_URL_LINK.style.cursor="pointer"
+                APACHE_URL_LINK.href=URL
+            }else {
+                APACHE_URL_LINK.style.display="none"
+                APACHE_URL_LINK.href=""
+            }
+            
+            if (IFRAME.src !== URL) {// we only update if the URL changes. preventing unecessary reloads
+                IFRAME.src = URL
+            }
+        }  
+        else {
+            IFRAME.src = URL
         }
     }
     else {
-        renderer.src = URL
+        IFRAME.src = URL
     }
 }
 
@@ -96,10 +108,16 @@ function showSourceCode(port) {
 }
 
 function killCodeServerView() {
-    source_code_viewer.src = ""
-    BTN_TAB_CODE.innerText = "Code"
-    BTN_TAB_CODE.classList.add("disabled")
-    BTN_TAB_RENDERER.click()
+    // only kill if the repo in view has changed
+    if(source_code_viewer.src.indexOf(inview_repo.repo.folder) == -1) {
+        source_code_viewer.src = ""
+        BTN_TAB_CODE.innerText = "Code"
+        BTN_TAB_CODE.classList.add("disabled")
+        BTN_TAB_RENDERER.click()
+    }
+    else{
+        console.log(`Cannot kill codeserver whilst repo in view has not changed`)
+    }
 }
 
 function createOrUpdateRepoStudentInfo(data) {
@@ -121,6 +139,14 @@ function createOrUpdateRepoStudentInfo(data) {
         })
 }
 
+function repoListItemClickHandler(event) {
+
+    resultListElement.innerHTML = ""
+    document.getElementById('tree').innerHTML = spinnerComponent()
+    getRepository(event.target.dataset.id).then(data => { displayRepo(data) })
+}
+
+
 function repoCheckoutBranch(repo_id, branch) {
     // using query string because branch names can be tricky to handle
     return fetch(`/repo/${repo_id}/branches/checkout?b=${branch}`)
@@ -139,11 +165,14 @@ function loadKBases(search=null){
                 <h2 class="accordion-header">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-base="${base_id}" data-bs-target="#base-${base_id}" aria-expanded="true" aria-controls="collapseOne">
                     ${ base.title }
+                    <p class="k-base-title-foot">
+                    by ${base.created_by}, last edited by ${base.last_edited_by} on the ${new Date(base.last_edited).toGMTString()}
+                    </p>
                 </button>
                 </h2>
                 <div id="base-${base_id}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    ${ base.text }
+                    ${ base.text.replaceAll("\r\n", "<br/>").replaceAll("\n", "<br/>") }
                     <div class="row">
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                         data-bs-target="#k-base-form" data-base="${base_id}" id="k-base-edit">Edit</button>
@@ -163,5 +192,5 @@ function loadKBases(search=null){
 }
 
 updateAuthToken()
-render("/stats")
+render("/stats", false, "home-tab")
 loadKBases()

@@ -1,5 +1,7 @@
 /** No UI handling */
 
+GET_TOKEN = () => localStorage.getItem("AUTH_TOKEN")
+
 function notify(message) {
     alert(message)
 }
@@ -90,7 +92,7 @@ function rebuildDirPath(treeHTMLElement) {
         // }
         return path
     }
-    return traverseUp(treeHTMLElement /*, treeHTMLElement.innerText */)
+    return traverseUp(treeHTMLElement , treeHTMLElement.innerText )
 }
 
 function repoAboutComponent(repo) {
@@ -136,7 +138,7 @@ async function reviewsAndIssuesComponent() {
     let html = ''
     let opened_issues_html = ''
     tasks = await getReviewTaskListJSON()
-    opened_issues = await fetch(`/review-issues/${localStorage.getItem("AUTH_TOKEN")}?repo=${inview_repo.repo.id}`).then( res => res.json())
+    opened_issues = await fetch(`/review-issues/${GET_TOKEN()}?repo=${inview_repo.repo.id}`).then( res => res.json())
     opened_issues.forEach( issue => {
         opened_issues_html += `
         <li class="list-group-item">
@@ -152,9 +154,9 @@ async function reviewsAndIssuesComponent() {
         html += "<option value='" + t.name + "'>" + t.name + "</option>"
     })
 
-    return `<div class="card card-reviews-issues" style="position: absolute;top: 5vh;height: 75vh; z-index: 1; width: 16%">
+    return `<div class="card card-reviews-issues" style="position: absolute;top: 5vh;height: 75vh; z-index: 1000; width: 16%">
                 <div class="card-footer">
-                    <button type="button" class="btn btn-danger btn-sm" id="btn-close-rev-n-issues">Quit</button>
+                    <button type="button" class="btn btn-danger btn-sm float-end" id="btn-close-rev-n-issues">Quit</button>
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
@@ -327,18 +329,20 @@ function updateAuthToken() {
 }
 
 function getKBases(search = null) {
-    return fetch(`/knowledge-base/${localStorage.getItem("AUTH_TOKEN")}${search ? '?search=' + search : ''}`)
+    return fetch(`/knowledge-base/${GET_TOKEN()}${search ? '?search=' + search : ''}`)
         .then(res => res.json())
         .then(data => data)
 }
 
 function incrementBaseViewCount(base_id) {
-    fetch(`/knowledge-base/up-count/${localStorage.getItem("AUTH_TOKEN")}?id=${base_id}`)
+    fetch(`/knowledge-base/up-count/${GET_TOKEN()}?id=${base_id}`)
 }
 
+
 function fillKBaseFormWith(base) {
+    id = base.pk
     base = base.fields
-    document.querySelector("[name='k-base-frm']").id.value = base.id
+    document.querySelector("[name='k-base-frm']").id.value = id
     document.querySelector("[name='k-base-frm']").title.value = base.title
     document.querySelector("[name='k-base-frm']").text.value = base.text
     document.querySelector("[name='k-base-frm']").tags.value = base.tags
@@ -374,6 +378,16 @@ function displayProjectReviwList(list){
     document.querySelector(".card-reviews-issues .card-body #review-tasks").innerHTML = html + `</form>
     <div class="d-grid gap-2">
         <button class="btn btn-primary btn-small" type="button" id="btn-submit-new-issue">Submit new issue</button>
+        <button class="btn btn-warning btn-small" type="button" data-bs-toggle="modal" data-bs-target="#review-email-text" id="btn-get-issue-text">Get text for email</button>
     </div>
     `
+}
+
+
+function getMostPopularRepos(){
+    return fetch(`/repo/most-populars/${GET_TOKEN()}`)
+    .then( res => {
+        if(res.ok) return res.json()
+        else return []
+    })
 }

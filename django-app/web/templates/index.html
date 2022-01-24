@@ -27,6 +27,7 @@
           <input class="form-control me-2" type="search" placeholder="search repository..." aria-label="Search"
             id="txt-search" autocomplete="off">
           <ul class="list-group col-2 card" id="search-result">
+
           </ul>
         </form>
       </div>
@@ -50,11 +51,18 @@
       <div class="col-10 content">
         <ul class="nav nav-tabs" id="nav-tab" role="tablist">
           <li class="nav-item btn-refresh-iframe">
-            <i class="bi bi-arrow-clockwise"></i> refresh renderer
+            <i class="bi bi-arrow-clockwise" style="
+            font-size: 1.1rem;
+            cursor: pointer;
+        "></i>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="btn-renderer-tab" data-bs-toggle="tab" data-bs-target="#renderer"
-              type="button" role="tab" aria-controls="home" aria-selected="true">Render view</button>
+            <button class="nav-link active" id="btn-home-tab" data-bs-toggle="tab" data-bs-target="#home-tab"
+              type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="btn-renderer-tab" data-bs-toggle="tab" data-bs-target="#renderer"
+              type="button" role="tab" aria-controls="home" aria-selected="true">Repo Preview</button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="btn-code-tab" data-bs-toggle="tab" data-bs-target="#source-code" type="button"
@@ -71,18 +79,23 @@
         </ul>
         <div class="tab-content" id="nav-tab-content">
           <!-- <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div> -->
-          <iframe class="tab-pane fade show active" id="renderer" role="tabpanel" aria-labelledby="renderer-tab" src=""
+          <iframe class="tab-pane fade show active" id="home-tab" role="tabpanel" aria-labelledby="home-tab" src=""
             frameborder="0"></iframe>
+
+          <iframe class="tab-pane fade" id="renderer" role="tabpanel" aria-labelledby="renderer-tab" src=""
+            frameborder="0"></iframe>
+
           <iframe class="tab-pane fade" id="source-code" role="tabpanel" aria-labelledby="code-tab" src=""
             frameborder="0"></iframe>
+
           <div class="tab-pane fade" id="k-base">
-            <h1>K-Base for ITCS Coding Tutors</h1>
+            <h1>K-Base for ITCS Coding</h1>
             <div class="mb-3">
               <label for="exampleFormControlInput1" class="form-label">Search K-Base</label>
               <input type="text" class="form-control" id="k-base-search-key"
                 placeholder="search a title, a tag, a text...">
               <button type="button" class="btn btn-warning mt-1" data-bs-toggle="modal"
-                data-bs-target="#k-base-form">Add</button>
+                data-bs-target="#k-base-form" id="k-base-btn-add">Add</button>
             </div>
             <div id="k-base-main">
 
@@ -130,7 +143,7 @@
   </div>
 
   <div class="modal" tabindex="-1" id="k-base-form">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Knowledge form</h5>
@@ -145,7 +158,7 @@
             </div>
             <div class="mb-3">
               <label for="text" class="form-label">Message</label>
-              <textarea class="form-control" name="text" rows="3"></textarea>
+              <textarea class="form-control" name="text" rows="12"></textarea>
             </div>
             <div class="mb-3">
               <label for="tags" class="form-label">Tags</label>
@@ -156,6 +169,24 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="k-base-frm-btn-close">Close</button>
           <button type="button" class="btn btn-primary" id="k-base-frm-btn-submit">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" tabindex="-1" id="review-email-text">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Reviw Text Rendered<p class="text-muted">copy and paste text in email body</p></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+        </div>
+        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="k-base-frm-btn-close">Close</button>
         </div>
       </div>
     </div>
