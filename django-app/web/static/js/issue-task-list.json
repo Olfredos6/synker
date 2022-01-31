@@ -30,7 +30,8 @@
             "Use Leaflet ExtraMarkers(https://github.com/coryasilva/Leaflet.ExtraMarkers)",
             "Format all dates and numbers - dateJS & numeralJS.",
             "Remove all errors from console.",
-            "Use Bootstrap modals and tables."
+            "Use Bootstrap modals and tables.",
+            "Adopt a more modern design"
         ]
     },
     {
@@ -38,7 +39,8 @@
         "tasks": [
             "Remove CDNs",
             "Must not delete dependent entries",
-            "PHP must not render HTML"
+            "PHP must not render HTML",
+            "Adopt a more modern design"
         ]
     }
 ]

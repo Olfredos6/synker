@@ -328,6 +328,12 @@ class Repo(models.Model):
     def increment_open_count(self):
         print("Updating open count", Repo.objects.filter(node_id=self.node_id).update(open_count=models.F('open_count')+1))
 
+    @staticmethod
+    def get_from(node_id):
+        '''
+            Returns repo matching the given node_id
+        '''
+        return Repo.objects.get(node_id=node_id)
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances
