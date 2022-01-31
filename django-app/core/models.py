@@ -418,13 +418,33 @@ class Token(models.Model):
 
     @staticmethod
     def is_valid_email(email):
-        ''' check if provided email for authentication is valid '''
+        ''' check if provided email for authentication is valid 
+            and matches the right user.
+        '''
         if email not in settings.AUTH_VALID_EMAILS:
             return False
         return True
+
     
-    @property
-    def has_expired(self):
+    def is_matching(email:str) -> bool:
+        ''' check if provided email belong to the token.
+        '''
+        if email.lower() == self.email.lower():
+            return True
+        else:
+            return False
+    
+    def has_expired(self, fake=False):
+        '''
+            Check if it has been more than settings.AUTH_TOKEN_LIFETIME
+            since the token was issued.
+
+            @param
+            fake: If provided, method will return True regardless
+        '''
+        if fake:
+            return True
+        print(f"Token for {self.email} expiring on the {self.doc}")
         if (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date() > self.doc:
             return True
         return False
@@ -437,8 +457,8 @@ class Token(models.Model):
             If new one has been created, email tutu
         '''
         token, created = Token.objects.get_or_create(email=email)
-        print("-------TOKEN HAS EXPIRED??? ------>>>>", token.has_expired )
-        if token.has_expired:
+
+        if token.has_expired():
             print("Expired token, generating new one...")
             token.delete()
             token = Token.objects.create(email=email)
