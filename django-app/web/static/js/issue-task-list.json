@@ -23,7 +23,7 @@
             "Add country's points of interest markers. Markers should be evenly distributed across the map",
             "Add country's latest news",
             "Add weather forecast",
-            "Present data proofessionally using widgets and tables where necessary",
+            "Present data professionally using widgets and tables where necessary",
             "All API calls must occur on the backend",
             "Keep the countryBorders.geo.json file on the sever. Write tow PHP routines, one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country",
             "Use Leaflet markerCLuster(https://github.com/Leaflet/Leaflet.markercluster)",
