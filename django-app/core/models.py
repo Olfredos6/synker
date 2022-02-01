@@ -444,9 +444,10 @@ class Token(models.Model):
         '''
         if fake:
             return True
-        print(f"Token for {self.email} expiring on the {self.doc}")
+
         if (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date() > self.doc:
             return True
+        
         return False
 
     @staticmethod

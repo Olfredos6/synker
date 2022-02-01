@@ -10,6 +10,7 @@
         "name": "Gazetteer",
         "tasks": [
             "Rename application to Gazetteer.",
+            "List country names alphabetically",
             "Remove location marker",
             "Map needs to fit viewport exactly on all devices.",
             "Use L.geoJSON() styling options",
