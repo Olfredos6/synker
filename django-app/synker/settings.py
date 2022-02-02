@@ -188,6 +188,8 @@ if not TEMP_FOLDER.exists():
 AUTH_TOKEN_LIFETIME = int(environ.get("AUTH_TOKEN_LIFETIME"))
 AUTH_VALID_EMAILS = [ email + "@itcareerswitch.co.uk" for email in environ.get("AUTH_VALID_EMAILS", "").split(",")  ]
 
+CSP_USABLE = [ int(port_number) for port_number in environ.get("CSP_USABLE").split(",") ]
+
 print(f"""
     DJANGO DEBUG: {DEBUG}
     STATIC ROOT: {STATIC_ROOT}
@@ -198,4 +200,5 @@ print(f"""
     GITHUB TYPE OF REPO SYNCED: {GITHUB_REPO_TYPE}
     AUTH TOKEN LIFETIME: {AUTH_TOKEN_LIFETIME}
     AUTH_VALID_EMAILS: {AUTH_VALID_EMAILS}
+    USABLE PORTS: {CSP_USABLE}
     """)

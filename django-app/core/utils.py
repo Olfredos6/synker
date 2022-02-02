@@ -39,6 +39,7 @@ def pipeCMD(cmd: str) -> str:
         text=True,
         capture_output=True
     )
+    print(code.stdout)
     return code.stdout
     
 
@@ -49,13 +50,7 @@ def start_code_server_instance(port: int, path: str, name="code-server"):
 
     path = os.environ.get("APP_HOST_DIR") + str(path)
     print(f"----> RUNNING CODE SERVER USING PORT {port} ON PATH {path}")
-    code = subprocess.run(
-        f'''echo 'docker run -d --rm --name {name} -e PUID=0 -e PGID=0 -e TZ=Europe/London -v "{path}:/{name}" -p {port}:8443 linuxserver/code-server:latest' > /hostpipe''',
-        shell=True,
-        text=True,
-        capture_output=True
-    )
-    return code.stdout
+    return pipeCMD(f"""docker run -d --rm --name {name} -e PUID=0 -e PGID=0 -e TZ=Europe/London -v "{path}:/{name}" -p {port}:8443 linuxserver/code-server:latest""")
 
 
 def kill_code_server_instance(name: str):

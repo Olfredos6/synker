@@ -303,14 +303,17 @@ class Repo(models.Model):
         sleep(5) # I do not like this but we do this for now
         print("Starting new instance after 5 seconds...")
         # @TODO Wainting 5 seconds is not enough....no gurantee given
-        start_code_server_instance(port, self.path, self.folder_name)
+        print("STD OUT --->" , start_code_server_instance(port, self.path, self.folder_name))
 
         return port
     
     def kill_code_server(self):
         from core.utils import kill_code_server_instance
-        kill_code_server_instance(self.folder_name)
-        CodeServerPort.objects.get(container=self.folder_name).delete()
+        try:
+            print("STD OUT --->" ,kill_code_server_instance(self.folder_name))
+            CodeServerPort.objects.get(container=self.folder_name).delete()
+        except Exception as e:
+            print(f"The following error occured while kill_code_server: {e}")
 
     def update_remote_token_access(self):
         ''' 
@@ -337,8 +340,8 @@ class CodeServerPort(models.Model):
 
     @staticmethod
     def free_one():
-        # returns an unused port between 4005 and 4015
-        free_ports = [ number for number in range(4005, 4011) if number not in [port.number for port in CodeServerPort.objects.all()] ]
+        # returns an unused port among those listed in CSP_USABLE
+        free_ports = [ number for number in settings.CSP_USABLE if number not in [port.number for port in CodeServerPort.objects.all()] ]
         print("Found FREE PORTS", free_ports)
         if len(free_ports) == 0:
             # kill the oldest and return its number
