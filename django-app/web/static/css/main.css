@@ -51,6 +51,12 @@ iframe {
 #tree {
     overflow: auto;
     padding-left: 0.2rem;
+    height: 50vh;
+}
+
+.card:has(#tree) { 
+    /* not supported */
+    border-bottom: unset;
 }
 
 .btn-refresh-iframe {

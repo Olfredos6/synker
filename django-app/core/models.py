@@ -331,6 +331,12 @@ class Repo(models.Model):
     def increment_open_count(self):
         print("Updating open count", Repo.objects.filter(node_id=self.node_id).update(open_count=models.F('open_count')+1))
 
+    @staticmethod
+    def get_from(node_id):
+        '''
+            Returns repo matching the given node_id
+        '''
+        return Repo.objects.get(node_id=node_id)
 
 class CodeServerPort(models.Model):
     # Port manager for code-server instances
@@ -415,15 +421,36 @@ class Token(models.Model):
 
     @staticmethod
     def is_valid_email(email):
-        ''' check if provided email for authentication is valid '''
+        ''' check if provided email for authentication is valid 
+            and matches the right user.
+        '''
         if email not in settings.AUTH_VALID_EMAILS:
             return False
         return True
+
     
-    @property
-    def has_expired(self):
+    def is_matching(email:str) -> bool:
+        ''' check if provided email belong to the token.
+        '''
+        if email.lower() == self.email.lower():
+            return True
+        else:
+            return False
+    
+    def has_expired(self, fake=False):
+        '''
+            Check if it has been more than settings.AUTH_TOKEN_LIFETIME
+            since the token was issued.
+
+            @param
+            fake: If provided, method will return True regardless
+        '''
+        if fake:
+            return True
+
         if (datetime.now() - timedelta(days=settings.AUTH_TOKEN_LIFETIME)).date() > self.doc:
             return True
+        
         return False
 
     @staticmethod
@@ -434,8 +461,8 @@ class Token(models.Model):
             If new one has been created, email tutu
         '''
         token, created = Token.objects.get_or_create(email=email)
-        print("-------TOKEN HAS EXPIRED??? ------>>>>", token.has_expired )
-        if token.has_expired:
+
+        if token.has_expired():
             print("Expired token, generating new one...")
             token.delete()
             token = Token.objects.create(email=email)

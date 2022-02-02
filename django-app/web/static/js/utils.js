@@ -92,7 +92,7 @@ function rebuildDirPath(treeHTMLElement) {
         // }
         return path
     }
-    return traverseUp(treeHTMLElement , treeHTMLElement.innerText )
+    return traverseUp(treeHTMLElement , treeHTMLElement.nodeName === 'SUMMARY' ? "" : treeHTMLElement.innerText )
 }
 
 function repoAboutComponent(repo) {

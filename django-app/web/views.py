@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 import datetime
 
 
-
 def req_body_to_json(request):
     return json.loads(request.body.decode("utf-8"))
 
@@ -29,7 +28,7 @@ def is_authed(request, token):
     '''
     token_qs = Token.objects.filter(value=token)
     if token_qs.exists():
-        if not token_qs[0].has_expired:
+        if not token_qs[0].has_expired():
             log_authed_request(request, token)
             return True
 
@@ -43,9 +42,11 @@ def index(request):
 
 def landing(request, token):
     token_qs = Token.objects.filter(value=token)
+
     if token_qs.exists():
-        if not token_qs[0].has_expired:
+        if not token_qs[0].has_expired():
             return render(request, 'index.html', {})
+    
     return redirect('index')
 
 
@@ -55,6 +56,10 @@ def auth(request):
     if Token.is_valid_email(email):
         # create new token
         token, created = Token.issue(email=email)
+
+        # create logging account session email
+        request.session["auth-user"] = email
+
         return JsonResponse({"message": "OTP required" }, safe=False)
     return JsonResponse({"message": "Invalid email"}, safe=False)
 
@@ -62,7 +67,7 @@ def auth(request):
 def confirm_otp(request):
     otp = json.loads(request.body.decode("utf-8")).get("otp", None)
     token_qs = Token.objects.filter(otp=otp)
-    if token_qs.exists():
+    if token_qs.exists() and token_qs[0].email == request.session.get("auth-user"):
         return JsonResponse({"token": token_qs[0].value}, safe=False)
     return JsonResponse({"error": "Invalid OTP"}, safe=False)
 
