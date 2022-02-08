@@ -32,14 +32,14 @@ def pipeCMD(cmd: str) -> str:
     '''
     import subprocess
 
-    print(f"PIPING:\n\t    {cmd}")
+    print(f"PIPING:\n\t    {cmd}") # Make sure the instruction 'while true; do eval "$(cat ./pipes)"; done' is running on the pipe, host side
     code = subprocess.run(
         f'''echo '{cmd}' > /hostpipe''',
         shell=True,
         text=True,
         capture_output=True
     )
-    print(code.stdout)
+    print("La suite --->", code.stdout)
     return code.stdout
     
 

@@ -75,7 +75,15 @@ def confirm_otp(request):
 def search_repo(request):
     keyword = request.GET.get('keyword')
     data = []
-    for repo in Repo.objects.filter( Q(full_name__icontains=keyword) | Q(student__name__icontains=keyword) | Q(student__surname__icontains=keyword)| Q(student__customer_no__contains=keyword)| Q(student__email__contains=keyword) ):
+    for repo in Repo.objects.filter( 
+        Q(full_name__icontains=keyword) | 
+        Q(student__name__icontains=keyword) | 
+        Q(student__surname__icontains=keyword)| 
+        Q(student__customer_no__contains=keyword)| 
+        Q(student__email__contains=keyword) |
+        Q(node_id__iexact=keyword)
+        
+        ):
         data.append(repoSerialize(repo))
     return JsonResponse(data, safe=False)
 
