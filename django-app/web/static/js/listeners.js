@@ -67,7 +67,7 @@ document.querySelector("#repo-about").addEventListener("click", (e) => {
 })
 
 
-document.querySelector("#txt-search").addEventListener('click', () => {
+document.querySelector("#txt-search").addEventListener('click', (e) => {
     // check if the repo in view was edited and notify before leaving
     if (inview_repo) {
         checkInViewRepoWasEdited()
@@ -76,19 +76,27 @@ document.querySelector("#txt-search").addEventListener('click', () => {
     else
         REPO_WAS_EDITED = 999
 
-    // collect and display most browsed repos
-    getMostPopularRepos()
-        .then(data => {
-            let repos_html = ''
-            data.forEach(repo => {
-                repos_html += `<li class="list-group-item repo-list-item" data-id="${repo.id}" data-bs-toggle="tooltip" data-bs-placement="right" title="${repo.full_name}">${repo.full_name.length < 20 ? repo.full_name : repo.full_name.substr(0, 20) + "..."}</li>`
+    // search repo if keyword is empty
+    let keyword = e.target.value
+    if (keyword.length > 3) {
+        resultListElement.innerHTML += spinnerComponent("searching...")
+        searchRepo(keyword).then(results => showSearchResults(results))
+    }
+    else {
+        // collect and display most browsed repos
+        getMostPopularRepos()
+            .then(data => {
+                let repos_html = ''
+                data.forEach(repo => {
+                    repos_html += `<li class="list-group-item repo-list-item" data-id="${repo.id}" data-bs-toggle="tooltip" data-bs-placement="right" title="${repo.full_name}">${repo.full_name.length < 20 ? repo.full_name : repo.full_name.substr(0, 20) + "..."}</li>`
+                })
+                resultListElement.innerHTML = `
+    <hr>
+    <h6 style="text-align: center;">Recent most browsed</h6>
+    ${repos_html}
+    `
             })
-            resultListElement.innerHTML = `
-        <hr>
-        <h6 style="text-align: center;">Recent most browsed</h6>
-        ${repos_html}
-        `
-        })
+    }
 })
 
 $("#tree").on("click", "summary[class=selected]", e => {
