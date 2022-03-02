@@ -1,6 +1,7 @@
 # DO NOT FORGET TO CONFIGURE NGINX ON HOST.
 # Nginx configuration sample found inside ./synker.conf
-# while true; do eval "$(cat ./pipes)"; done
+# Run named pipes in abckground ---> docker-compose up -d && (while true; do eval "$(cat ./pipes)"; done) &
+# Run named pipes in abckground silenced ---> (while true; do eval "$(cat ./pipes)"; done) & </dev/null &>/dev/null &
 version: "3.2"
 
 services:

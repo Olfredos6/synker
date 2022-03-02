@@ -42,8 +42,9 @@ def fetch_all(type=settings.GITHUB_REPO_TYPE):
             else:
                 # Only proceed with creation if the repo has a branch.
                 # This is the case when updated_at != created_at
-                if r.get('updated_at') == r.get('created_at'):
-                    continue # skip this repo
+                # @TODO: check if has any branch if created_at and pdated_at are equal *********
+                # if r.get('updated_at') == r.get('created_at'):
+                #     continue # skip this repo
                     
                 repository = Repo.create_from_payload(type, **r)
                 # print("Created repository", repository)

@@ -61,7 +61,7 @@ class Repo(models.Model):
         new_repo.node_id = kwargs.get('node_id')
         new_repo._name = kwargs.get('name')
         new_repo.full_name = kwargs.get('full_name')
-        new_repo.updated_at = kwargs.get('pushed_at') # based on the difference between pushed_at and updated_at https://stackoverflow.com/a/15922637/5253580
+        new_repo.updated_at = datetime.strptime(kwargs.get('pushed_at'),'%Y-%m-%dT%H:%M:%SZ') #kwargs.get('pushed_at') # based on the difference between pushed_at and updated_at https://stackoverflow.com/a/15922637/5253580
         new_repo.clone_url = kwargs.get('clone_url')
         new_repo.size = kwargs.get('size')
         new_repo.owner_login = kwargs.get('owner').get('login')
@@ -230,15 +230,23 @@ class Repo(models.Model):
 
         else:
             # print(f"will only update if {self.updated_at} is greater than {timestamp.replace(tzinfo=UTC)}")
-            if self.updated_at < timestamp.replace(tzinfo=UTC):
-                # print(f"Updating/pulling {self.full_name}")
-                # first check if the repo was edited locally, reset it if necessary
-                if self.was_edited:
-                    self.reset()
-
-                self.pull()
-                self.update_db(updated_at=timestamp, size=size)
-                feedback = 1
+            # try:
+            if True:
+                repo_updated_at = self.updated_at
+                if type(repo_updated_at) == str:
+                    repo_updated_at =  datetime.strptime(repo_updated_at,'%Y-%m-%dT%H:%M:%SZ')
+                repo_updated_at = repo_updated_at.replace(tzinfo=UTC)
+                if repo_updated_at < timestamp.replace(tzinfo=UTC):
+                    # print(f"Updating/pulling {self.full_name}")
+                    # first check if the repo was edited locally, reset it if necessary
+                    if self.was_edited:
+                        self.reset()
+    
+                    self.pull()
+                    self.update_db(updated_at=timestamp, size=size)
+                    feedback = 1
+            # except Exception as e:
+            #     print(self.full_name, self.updated_at, type(timestamp), e)
         
         return feedback
     
