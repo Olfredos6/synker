@@ -1,7 +1,8 @@
 # DO NOT FORGET TO CONFIGURE NGINX ON HOST.
 # Nginx configuration sample found inside ./synker.conf
-# Run named pipes in abckground ---> docker-compose up -d && (while true; do eval "$(cat ./pipes)"; done) &
+# Run named pipes in abckground ---> docker-compose up -d && ((while true; do eval "$(cat ./pipes)"; done) &) && docker-compose logs -f --tail 10
 # Run named pipes in abckground silenced ---> (while true; do eval "$(cat ./pipes)"; done) & </dev/null &>/dev/null &
+# ---> Kill all provisioned CodeServer instances from the command line using docker-compose ====> docker-compose exec django python manage.py shell -c "from core.models import CodeServerPort as CSP; CSP.kill_all()"
 version: "3.2"
 
 services:
