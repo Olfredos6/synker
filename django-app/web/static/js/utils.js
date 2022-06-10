@@ -138,7 +138,7 @@ async function reviewsAndIssuesComponent() {
     let html = ''
     let opened_issues_html = ''
     tasks = await getReviewTaskListJSON()
-    opened_issues = await fetch(`/review-issues/${GET_TOKEN()}?repo=${inview_repo.repo.id}`).then( res => res.json())
+    opened_issues = await fetch(`/review-issues/${GET_TOKEN()}?repo=${inview_repo.repo.id}`).then( res => res.json()) || []
     opened_issues.forEach( issue => {
         opened_issues_html += `
         <li class="list-group-item">

@@ -289,9 +289,10 @@ class Repo(models.Model):
         if not file:
             return False
         else:
-            print("updatinf file at", file[0])
-            with open(file[0], 'w') as f:
-                f.write(content)
+            print("updatinf file at", file[0], file)
+            for file_path in file:
+                with open(file_path, 'w') as f:
+                    f.write(content)
             return True
 
     def get_code_server(self):

@@ -11,6 +11,7 @@ def repoSerialize(repo: Repo):
         "name": repo.name,
         "full_name": repo.full_name,
         "last_updated": repo.updated_at,
+        "date_added": repo.date_added,
         "url": repo.url,
         "owner": repo.owner_login,
         "size": repo.size,
@@ -45,13 +46,22 @@ def get_json_parsable_repo_data(id):
 
 def compute_stats():
     repos = Repo.objects.all()
+    top_10_old_repos = repos.order_by('date_added', 'updated_at')[:10]
+    top_10_old_update = repos.order_by('-updated_at')[:10]
+
     return {
         "repo_count": repos.count(),
         "total_size": functools.reduce(lambda a,b: a+b, [r.size for r in repos]),
         "latest_repos": [ repoSerialize(repo) for repo in Repo.objects.all().order_by("-date_added")[:5]],
         "popular_repos": [ repoSerialize(repo) for repo in Repo.recent_populars()],
-        "recently_updated_repos": [ repoSerialize(repo) for repo in Repo.objects.all().order_by("-updated_at")[:5]]
+        "recently_updated_repos": [ repoSerialize(repo) for repo in Repo.objects.all().order_by("-updated_at")[:5]],
+        "top_10_old_repos": [ repoSerialize(repo) for repo in top_10_old_repos ],
+        "top_10_old_update": [ repoSerialize(repo) for repo in top_10_old_update ]
     }
+
+
+def monitoring():
+    repos
 
 
 def send_mail(recipient=None, content=None):

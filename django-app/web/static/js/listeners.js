@@ -60,9 +60,9 @@ document.querySelector("#repo-about").addEventListener("click", (e) => {
     if (e.target.matches("#btn-get-issue-text")) {
         let html = ""
         Object.values(formToJSON("frm-issue-task-list")).forEach(i => {
-            html += `<li> ${document.querySelector("[name=frm-issue-task-list]").children[i].innerText} </li>`
+            html += `- ${document.querySelector("[name=frm-issue-task-list]").children[i].innerText}\n`
         })
-        document.querySelector("#review-email-text .modal-body").innerHTML = `<ul>${html}</ul>`
+        document.querySelector("#review-email-text .modal-body #review-text").value = html
     }
 })
 

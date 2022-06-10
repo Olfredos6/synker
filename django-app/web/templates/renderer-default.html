@@ -20,6 +20,10 @@
         .repo-list-item:hover {
             background-color: #f8f9fa;
         }
+
+        .li-details {
+            font-size: 0.75em;
+        }
     </style>
 </head>
 
@@ -93,6 +97,30 @@
                         <ul class="list-group list-group-flush">
                             {% for repo in stats.recently_updated_repos %}
                             <li class="list-group-item repo-list-item" data-id="{{ repo.id }}">{{ repo.full_name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <h6>Monitoring</h6>
+                    <div class="col">
+                        <p class="display-6">Oldest</p>
+                        <ul class="list-group list-group-flush">
+                            {% for repo in stats.top_10_old_repos %}
+                            <li class="list-group-item repo-list-item" data-id="{{ repo.id }}">
+                                <p>
+                                    {{ repo.full_name }}
+                                    <span class="li-details float-start">Added: {{ repo.date_added }}| Last updated: {{ repo.last_updated }}</span>
+                                </p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <p class="display-6">Old updaded</p>
+                        <ul class="list-group list-group-flush">
+                            {% for repo in stats.top_10_old_update %}
+                            <li class="list-group-item repo-list-item" data-id="{{ repo.id }}">{{ repo.full_name }} <small class="li-details float-end">{{ repo.last_updated }}</small></li>
                             {% endfor %}
                         </ul>
                     </div>

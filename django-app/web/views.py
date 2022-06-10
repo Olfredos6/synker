@@ -240,6 +240,7 @@ def list_repo_issues(request, token):
 
 @csrf_exempt
 def review_issues(request, token):
+    print("Hello ------->", token)
     if is_authed(request, token):
         if request.method == "POST":
             body = req_body_to_json(request)

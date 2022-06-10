@@ -10,26 +10,30 @@
         "name": "Gazetteer",
         "tasks": [
             "Rename application to Gazetteer.",
+            "Load the map in the global scope, not in a function",
             "List country names alphabetically",
+            "Use the <strong>change</strong> event listener to automatically collect the selected country's data. The user should not need to click on a button to trigger that.",
             "Remove location marker",
             "Map needs to fit viewport exactly on all devices.",
             "Use L.geoJSON() styling options",
             "Make use of the fitBounds() method(https://leafletjs.com/reference.html#map-fitbounds)",
             "Try making top transparent and giving an absolute positioning.",
             "Add a preloader",
-            "Remove usage of CDNs",
+            "Do not write inline JavaScript code. Instead, register event listeners in your JavaScript module to add functionalities to the app",
+            "Do not make use of CDNs. Instead, download the required files for the libraries your project use into your codebase and serve them from there.",
             "Clear previous layers(markers, borders, etc...) before adding the newly selected country's",
             "PHP must not render HTML",
             "Detect device's current location and load its data",
             "Add country's points of interest markers. Markers should be evenly distributed across the map",
             "Add country's latest news",
             "Add weather forecast",
-            "Present data professionally using widgets and tables where necessary",
+            "Present data professionally using widgets and tables where necessary. See attached pictures below",
             "All API calls must occur on the backend",
-            "Keep the countryBorders.geo.json file on the sever. Write tow PHP routines, one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country",
+            "Use the file_get_contents method to get the content of the countryBorders.geo.json file.",
+            "Keep the countryBorders.geo.json file on the sever. Write two PHP routines: one that returns the list of country names and their ISO codes and the second one only the country borders data of the selected country",
             "Use Leaflet markerCLuster(https://github.com/Leaflet/Leaflet.markercluster)",
             "Use Leaflet ExtraMarkers(https://github.com/coryasilva/Leaflet.ExtraMarkers)",
-            "Format all dates and numbers - dateJS & numeralJS.",
+            "Format all dates and numbers - dateJS & numeralJS. Either use spaces or commas every thousandth like so 1,000,000",
             "Remove all errors from console.",
             "Use Bootstrap modals and tables.",
             "Adopt a more modern design"
@@ -38,10 +42,14 @@
     {
         "name": "Company Directory",
         "tasks": [
-            "Remove CDNs",
+            "Do not write inline JavaScript code. Instead, register event listeners in your JavaScript module to add functionalities to the app",
+            "Do not make use of CDNs. Instead, download the required files for the libraries your project use into your codebase and serve them from there.",
             "Must not delete dependent entries",
             "PHP must not render HTML",
-            "Adopt a more modern design"
+            "Remove the location field on all personnel forms. This info is already maintained and available through the selected department.",
+            "Adopt a more modern design",
+            "Editing the location on a personnel is not needed since the personnel's department already holds the location detail. Remove the location input from the personnel edit form.",
+            "App should also allow: Creating or adding a new department or location, Editing an existing department or location, Deleting an existing department or location. Deleting an existing department or location. This should not be allowed if the selected entry has dependencies(employee or department)."
         ]
     }
 ]

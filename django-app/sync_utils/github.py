@@ -29,7 +29,7 @@ def GET(endpoint, return_dict=True, params={} ):
     if r.ok:
         return r.json() if return_dict else r
     else:
-        print("!! ERROR?", r.status_code, r.reason)
+        print("!! ERROR?", r.url, r.status_code, r.reason)
         return None if return_dict else r
 
 def POST(endpoint, return_dict=True, params={} ):
