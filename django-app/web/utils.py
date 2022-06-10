@@ -4,6 +4,9 @@ Supporting utility functions for web views
 from core.models import Repo, Student
 from django.shortcuts import get_object_or_404
 import functools
+import requests
+from os import getenv
+
 
 def repoSerialize(repo: Repo):
     return {
@@ -64,5 +67,24 @@ def monitoring():
     repos
 
 
-def send_mail(recipient=None, content=None):
-    print(f"Fake mail send to {recipient}: {content}")
+def send_mail(recipient=None, content=None, is_html=False):
+    '''
+        Sends an email using the free service from https://github.com/Olfredos6/background-mailer
+
+    '''
+    data = {
+                "host": getenv('EMAIL_HOST'),
+                "port": getenv('EMAIL_PORT'),
+                "username": getenv('EMAIL_HOST_USER'),
+                "password": getenv('EMAIL_HOST_PASSWORD'),
+                "subject": "Syncer Sign-in OTP",
+                "recipient": recipient,
+                "message": content,
+                "html": is_html
+            }
+
+    res = requests.post(
+        'https://apis.nehemie.dev/bkg-emailer',
+        data=data)
+    
+    return res

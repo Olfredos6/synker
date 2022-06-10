@@ -481,7 +481,16 @@ class Token(models.Model):
             # send OTP
             print("OTP ----> ", token.otp)
         from web.utils import send_mail
-        send_mail(None, f"OTP ----> {token.otp}")
+        print("Send Mail ->", send_mail(
+            email, 
+            f"""
+            Hello,
+            
+            Your Syncer OTP is {token.otp}
+            
+            """,
+            True
+        ))
         
         return [ token, created ]
     
